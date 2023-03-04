@@ -1,0 +1,109 @@
+{% extends "../base.html" %}
+{% load static %}
+{% block title %}Payment Selection{%endblock %}
+{% block content %}
+
+<div class="container">
+  <div class="col-12">
+    <h1 class="h2">Delivery Options</h1>
+  </div>
+  <div class="col-12">
+    <p>Please select your delivery option</p>
+  </div>
+  <hr />
+</div>
+
+<div class="container">
+  <div class="row g-3">
+    <div class="col-md-4 col-lg-4 order-md-last p-0 order-3">
+      <div class="d-flex bd-highlight ms-0">
+        <div class="p-2 flex-grow-1 bd-highlight">Sub Total:</div>
+        <div class="p-2 bd-highlight"><span class="fw-bold h5">R</span><span id="sub_total"
+            class="fw-bold h5">{{basket.get_subtotal_price}}</span></div>
+      </div>
+      <div class="d-flex bd-highlight">
+        <div class="p-2 flex-grow-1 bd-highlight">Delivery Cost:</div>
+        <div class="p-2 bd-highlight"><span class="fw-bold h5">R</span><span id="delivery_price"
+            class="fw-bold h5">{{basket.get_delivery_price}}</span></div>
+      </div>
+      <div class="d-flex bd-highlight">
+        <div class="p-2 flex-grow-1 bd-highlight">Total:</div>
+        <div class="p-2 bd-highlight"><span class="fw-bold h5">R</span><span id="total"
+            class="fw-bold h5">{{basket.get_total_price}}</span></div>
+      </div>
+    </div>
+    
+    {% comment %} {% if shop == 'Shoprite'%}
+      <script src="https://www.paypal.com/sdk/js?client-id=Ac6wrbGsPZ081J9m5-NQqt7KfHqCKz2xyYFAQV9wX66P_kv15s57jieUDh_-dhdNRUjebLI0CgczYGD3&currency=USD"></script>
+    {% endif %}
+
+    {% if shop == 'Checkers'%}
+      <script src="https://www.paypal.com/sdk/js?client-id=AacRQ_0o8FhW8X0sj4lAh74XBPIu10Ypr6UzTuZLggo6Mo7Q11l5WE7-xZdjB0HLFdgdXCKBpewVhvUF&currency=USD"></script>
+    {% endif %}
+    
+    {% endcomment %}
+    <script
+      src="https://www.paypal.com/sdk/js?client-id=AacRQ_0o8FhW8X0sj4lAh74XBPIu10Ypr6UzTuZLggo6Mo7Q11l5WE7-xZdjB0HLFdgdXCKBpewVhvUF&currency=USD"
+      data-sdk-integration-source="button-factory">
+    </script>
+    <div class="col-md-7 col-lg-8 pe-0 pe-md-5">
+      <div id="paypal-button-container"></div>
+    </div>
+  </div>
+</div>
+<script>
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  var csrftoken = getCookie('csrftoken');
+
+  paypal.Buttons({
+    style: {
+      shape: 'rect',
+      color: 'gold',
+      layout: 'vertical',
+      label: 'paypal',
+
+    },
+  createOrder: function (data, actions) {
+      return actions.order.create({
+        purchase_units: [{
+          "amount": {
+            "currency_code": "USD",
+            "value": '{{basket.get_total_price}}'
+          }
+        }]
+      });
+    },
+  onApprove: function (data) {
+      var url = "{% url 'checkout:payment_complete' %}"
+      return fetch(url, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify({
+          orderID: data.orderID
+        })
+      }).then(function () {
+        location.href = '{% url 'checkout:payment_successful' %}';
+      })
+    },
+  }).render('#paypal-button-container');
+  {% comment %} }
+  initPayPalButton(); {% endcomment %}
+</script>
+
+{% endblock %}
