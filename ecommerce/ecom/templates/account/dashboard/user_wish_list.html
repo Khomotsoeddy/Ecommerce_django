@@ -25,6 +25,9 @@
           <h5 class="card-title">{{product.title}}</h5>
           <p class="card-text">{{product.description}}</p>
           <p class="card-text"><small class="text-muted">{{product.regular_price}}</small></p>
+          <button type="button" id="add-button" value="{{product.id}}" class="btn btn-success fw500">Add to
+            basket
+          </button>
           <a type="button" class="btn btn-primary fw500 btn-sm" href="{% url 'account:user_wishlist' product.id %}">Remove from Wishlist</a>
         </div>
       </div>

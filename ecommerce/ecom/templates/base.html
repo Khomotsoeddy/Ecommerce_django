@@ -22,7 +22,7 @@
     <nav class="navbar navbar-expand-md navbar-light bg-white border-bottom">
       <div class="container-fluid px-md-4">
         <div class="d-flex w-100 navbar-collapse">
-          <a class="navbar-brand d-flex-inline" href="/">
+          <a class="navbar-brand d-flex-inline" href="{% url "store:store_home" %}">
             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" class="bi bi-asterisk"
               viewBox="0 0 16 16">
               <path
@@ -31,7 +31,7 @@
           </a>
           <ul class="navbar-nav me-auto mb-2 mb-md-0">
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle d-none d-md-block fw500" href="#" id="navbarDropdown" role="button"
+              <a class="nav-link dropdown-toggle d-none d-md-block fw500" href="" id="navbarDropdown" role="button"
                 data-bs-toggle="dropdown" aria-expanded="false">
                 products
                 <i class="ps-1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -40,14 +40,14 @@
                       d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z" />
                   </svg></i>
               </a>
-              {% comment %} <ul class="dropdown-menu rounded-0 border-0" aria-labelledby="navbarDropdown">
+              <ul class="dropdown-menu rounded-0 border-0" aria-labelledby="navbarDropdown">
                 <li><a class="dropdown-item" href="{% url "store:store_home" %}">All</a></li>
-                {% for c in categories %}
+                {% comment %} {% for c in categories %}
                 <li {% if category.slug == c.slug %}class="selected" {% endif %}>
                   <a class="dropdown-item" href="{{ c.get_absolute_url }}">{{ c.name|title }}</a>
                 </li>
-                {% endfor %}
-              </ul> {% endcomment %}
+                {% endfor %} {% endcomment %}
+              </ul>
             </li>
 
           </ul>
@@ -88,6 +88,7 @@
                           {% if user.is_authenticated %}
                           <a href="{% url "account:dashboard" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link">Dashboard</a>
                           <a href="{% url "account:user_orders" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link">Orders</a>
+                          <a href="{% url "account:wishlist" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link">Wish List</a>
                           <a href="{% url "account:logout" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link">Logout</a>      
                           {% else %}
                           <a href="{% url "account:login" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link">Login</a>

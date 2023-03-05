@@ -14,6 +14,10 @@ from orders.models import Order
 from orders.views import user_orders
 from store.models import Product
 
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import smtplib 
+
 from .forms import RegistrationForm, UserAddressForm, UserEditForm
 from .models import Address, Customer
 from .tokens import account_activation_token
@@ -58,7 +62,8 @@ def edit_details(request):
 
 @login_required
 def delete_user(request):
-    user = Customer.objects.get(user_name=request.user)
+
+    user = Customer.objects.get(id=request.user.id)
     user.is_active = False
     user.save()
     logout(request)
@@ -89,7 +94,27 @@ def account_register(request):
                     "token": account_activation_token.make_token(user),
                 },
             )
-            print(message)
+            
+            me = 'powerwm111@gmail.com'
+            you = user.email
+            password = 'kddxamltpmiawtra'
+            email_body = "<html><boby>"+"Hi "+user.name+"\n\nYour account has successfully created. Please click below link to activate your account\n\n\n"+'http://'+current_site.domain+'/account/activate/'+urlsafe_base64_encode(force_bytes(user.pk))+'/'+account_activation_token.make_token(user)+"\n\nRegards\nMega Team"+"</body></html>"
+            email_message = MIMEMultipart('alternative',None,[MIMEText(email_body, 'html')])
+
+            email_message['subject'] = subject
+            email_message['from'] = me
+            email_message['to'] = user.email
+
+            try:
+                server = smtplib.SMTP('smtp.gmail.com:587')
+                server.ehlo()
+                server.starttls()
+                server.login(me,password)
+                server.sendmail(me,you,email_message.as_string())
+                server.quit()
+            except Exception as e:
+                print(f'error in sending email: {e}')
+
             user.email_user(subject=subject, message=message)
             return render(request, "account/registration/register_email_confirm.html", {"form": registerForm})
     else:
@@ -99,7 +124,7 @@ def account_register(request):
 
 def account_activate(request, uidb64, token):
     try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
+        uid = force_str(urlsafe_base64_decode(uidb64))
         user = Customer.objects.get(pk=uid)
     except (TypeError, ValueError, OverflowError, user.DoesNotExist):
         user = None
