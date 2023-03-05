@@ -25,7 +25,7 @@ SECRET_KEY = '_&g^5g=@ton^+*72o_+1=y^5q4na#1-h-0v5no3h53kre^ekpq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['khomotso.pythonanywhere.com', 'localhost', '127.0.0.1']
 
 
 # Application definition

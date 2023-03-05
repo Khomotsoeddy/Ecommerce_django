@@ -49,13 +49,18 @@ def delivery_address(request):
         return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
     addresses = Address.objects.filter(customer=request.user).order_by("-default")
-
-    if "address" not in request.session:
-        session["address"] = {"address_id": str(addresses[0].id)}
+    
+    print(addresses)
+    
+    if len(addresses) ==0:
+        return render(request, "account/dashboard/addresses.html")
     else:
-        session["address"]["address_id"] = str(addresses[0].id)
-        session.modified = True
-
+        if "address" not in request.session:
+            session["address"] = {"address_id": str(addresses[0].id)}
+        else:
+            session["address"]["address_id"] = str(addresses[0].id)
+            session.modified = True
+        
     return render(request, "checkout/delivery_address.html", {"addresses": addresses})
 
 
@@ -93,8 +98,6 @@ def payment_complete(request):
     response = PPClient.client.execute(requestorder)
 
     total_paid = response.result.purchase_units[0].amount.value
-    print('--------------------------------------')
-    print(response)
     basket = Basket(request)
 
     order = Order.objects.create(

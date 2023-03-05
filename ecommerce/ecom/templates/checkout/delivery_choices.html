@@ -23,7 +23,7 @@
 </div>
 {% endif %}
   <div class="row g-3">
-    {% if addresses|length == 0 %}
+    {% if deliveryoptions|length == 0 %}
     <div class="col-12">There are no delivery options <a href="{% url 'account:addresses' %}">Add Address</a></div>
     {% else %}
     <div class="col-md-4 col-lg-4 order-md-last p-0 order-3">
