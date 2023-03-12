@@ -14,6 +14,8 @@ from orders.models import Order
 from orders.views import user_orders
 from store.models import Product
 
+import calendar
+from datetime import date, datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib 
@@ -50,9 +52,18 @@ def dashboard(request):
 @login_required
 def edit_details(request):
     if request.method == "POST":
-        user_form = UserEditForm(instance=request.user, data=request.POST)
 
+        print(request.user.id)
+        user = Customer.objects.get(id=request.user.id)
+        
+        user.name = request.POST['name']
+        user.mobile = request.POST['mobile']
+        user.save()
+        user_form = UserEditForm(instance=user, data=request.POST)
+
+        print(user_form.is_valid())
         if user_form.is_valid():
+            # user_form.first_name = request.POST['first_name']
             user_form.save()
     else:
         user_form = UserEditForm(instance=request.user)
@@ -65,7 +76,7 @@ def delete_user(request):
 
     user = Customer.objects.get(id=request.user.id)
     user.is_active = False
-    user.save()
+    user.delete()
     logout(request)
     return redirect("account:delete_confirmation")
 
@@ -81,6 +92,33 @@ def account_register(request):
             user = registerForm.save(commit=False)
             user.email = registerForm.cleaned_data["email"]
             user.set_password(registerForm.cleaned_data["password"])
+            user.mobile = registerForm.cleaned_data['mobile']
+            user.id_number = registerForm.cleaned_data['id_number']
+            
+            user_id = user.id_number
+
+            year = int(user_id[0:2])
+            month = int(user_id[2:4])
+
+            day = int(user_id[4:6])
+
+            current_year = datetime.now().year
+
+            if year < 22: 
+                year += 2000
+            else:
+                year += 1900
+            
+            birthdate= date(year,month,day)
+
+            age = current_year - year
+
+            gender_digit = int(user_id[6])
+            gender = 'Male' if gender_digit >= 5 else 'Female'
+
+            user.date_of_birth = birthdate
+            user.	age_number = age
+            user.gender = gender
             user.is_active = False
             user.save()
             current_site = get_current_site(request)

@@ -18,18 +18,32 @@
   {% endfor %}
   {% endif %}
 
-  <label>{{ form.user_name.label }}<span class="text-muted small">
+  {% comment %} <label>{{ form.user_name.label }}<span class="text-muted small">
       (Required)</span></label>
-  {{ form.user_name }}
-  <label>{{ form.email.label}}<span class="text-muted small">
+  {{ form.user_name }} {% endcomment %}
+  <label>{{ form.id_number.label }}<span class="text-muted small">
+    (Required)</span></label>
+  {{ form.id_number }}
+
+  <label>{{ form.name.label }}<span class="text-muted small">
+    (Required)</span></label>
+  {{ form.name }}
+
+  <label>{{ form.mobile.label }}<span class="text-muted small">
+    (Required)</span></label>
+  {{ form.mobile }}
+
+  <label>{{ form.email.label }}<span class="text-muted small">
       (Required)</span></label>
   {{ form.email }}
+
   <label>{{ form.password.label}}<span class="text-muted mb-4">
     </span></label>
   <small class="form-text text-muted mb-4 small">
     At least 8 characters and 1 digit
   </small>
   {{ form.password }}
+  
   <label>{{ form.password2.label}}<span class="text-muted small">
       (Required)</span></label>
   {{ form.password2 }}

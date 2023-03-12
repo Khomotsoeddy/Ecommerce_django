@@ -6,7 +6,6 @@ from django.core.mail import send_mail
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-
 class CustomAccountManager(BaseUserManager):
 
     def create_superuser(self, email, name, password, **other_fields):
@@ -40,7 +39,11 @@ class CustomAccountManager(BaseUserManager):
 class Customer(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     name = models.CharField(max_length=150)
-    mobile = models.CharField(max_length=20, blank=True)
+    mobile = models.CharField(max_length=10, blank=True,unique=True)
+    id_number = models.CharField(max_length=13, blank=False,unique=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    age_number = models.CharField(max_length=3,blank=True)
+    gender = models.CharField(max_length=6, default='')
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
@@ -49,7 +52,7 @@ class Customer(AbstractBaseUser, PermissionsMixin):
     objects = CustomAccountManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name']
+    REQUIRED_FIELDS = ['name','id']
 
     class Meta:
         verbose_name = "Accounts"

@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import (AuthenticationForm, PasswordResetForm,
                                        SetPasswordForm)
+from django.core.validators import MaxValueValidator, MinValueValidator 
 
 from .models import Customer, Address
 
@@ -45,31 +46,46 @@ class UserLoginForm(AuthenticationForm):
 
 class RegistrationForm(forms.ModelForm):
 
-    user_name = forms.CharField(
-        label='Enter Username', min_length=4, max_length=50, help_text='Required')
+    # user_name = forms.CharField(
+    #     label='Enter Username', min_length=4, max_length=50, help_text='Required')
+    name = forms.CharField(
+        label='Enter name', min_length=4, max_length=50, help_text='Required')
+    mobile = forms.CharField(
+        label='Phone number', min_length=4, max_length=50, help_text='Required')
+    id_number = forms.CharField(
+        label='Identity number', min_length=13, max_length=13, help_text='Required', error_messages={
+        'required': 'Sorry, you will need an ID Number'})
     email = forms.EmailField(max_length=100, help_text='Required', error_messages={
         'required': 'Sorry, you will need an email'})
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(
-        label='Repeat password', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
 
     class Meta:
         model = Customer
-        fields = ('user_name', 'email',)
-
-    def clean_username(self):
-        user_name = self.cleaned_data['user_name'].lower()
-        r = Customer.objects.filter(user_name=user_name)
-        if r.count():
-            raise forms.ValidationError("Username already exists")
-        return user_name
+        fields = ('name','mobile', 'email','id_number')
+    
+    def clean_id_number(self):
+        id_number = self.cleaned_data['id_number']
+        if Customer.objects.filter(id_number=id_number).exists():
+            raise forms.ValidationError("Id number already exists")
+        return id_number
+    
+    def clean_mobile(self):
+        mobile = self.cleaned_data['mobile']
+        if Customer.objects.filter(mobile=mobile).exists():
+            raise forms.ValidationError("Mobile number already exists")
+        return mobile
 
     def clean_password2(self):
         cd = self.cleaned_data
-        if cd['password'] != cd['password2']:
-            raise forms.ValidationError('Passwords do not match.')
-        return cd['password2']
-
+        
+        if len(cd['password']) < 7:
+            raise forms.ValidationError('Passwords is short.')
+        else:
+            if cd['password'] != cd['password2']:
+                raise forms.ValidationError('Passwords do not match.')
+            return cd['password2']
+ 
     def clean_email(self):
         email = self.cleaned_data['email']
         if Customer.objects.filter(email=email).exists():
@@ -79,8 +95,12 @@ class RegistrationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['user_name'].widget.attrs.update(
-            {'class': 'form-control mb-3', 'placeholder': 'Username'})
+        self.fields['name'].widget.attrs.update(
+            {'class': 'form-control mb-3', 'placeholder': 'Name'})
+        self.fields['mobile'].widget.attrs.update(
+            {'class': 'form-control mb-3', 'placeholder': 'Mibile'})
+        self.fields['id_number'].widget.attrs.update(
+            {'class': 'form-control mb-3', 'placeholder': 'id_number'})
         self.fields['email'].widget.attrs.update(
             {'class': 'form-control mb-3', 'placeholder': 'E-mail', 'name': 'email', 'id': 'id_email'})
         self.fields['password'].widget.attrs.update(
@@ -117,20 +137,35 @@ class UserEditForm(forms.ModelForm):
     email = forms.EmailField(
         label='Account email (can not be changed)', max_length=200, widget=forms.TextInput(
             attrs={'class': 'form-control mb-3', 'placeholder': 'email', 'id': 'form-email', 'readonly': 'readonly'}))
+    id_number = forms.EmailField(
+        label='Identity Number(can not be changed)', max_length=200, widget=forms.TextInput(
+            attrs={'class': 'form-control mb-3', 'placeholder': 'id_number', 'id': 'form-idnumber', 'readonly': 'readonly'}))
+    gender = forms.EmailField(
+        label='Gender(can not be changed)', max_length=200, widget=forms.TextInput(
+            attrs={'class': 'form-control mb-3', 'placeholder': 'gender', 'id': 'form-gender', 'readonly': 'readonly'}))
+    date_of_birth = forms.EmailField(
+        label='Identity Number(can not be changed)', max_length=200, widget=forms.TextInput(
+            attrs={'class': 'form-control mb-3', 'placeholder': 'date_of_birth', 'id': 'form-date_of_birth', 'readonly': 'readonly'}))
 
     user_name = forms.CharField(
         label='Firstname', min_length=4, max_length=50, widget=forms.TextInput(
             attrs={'class': 'form-control mb-3', 'placeholder': 'Username', 'id': 'form-firstname', 'readonly': 'readonly'}))
 
-    first_name = forms.CharField(
-        label='Username', min_length=4, max_length=50, widget=forms.TextInput(
+    name = forms.CharField(
+        label='Firstname', min_length=4, max_length=50, widget=forms.TextInput(
             attrs={'class': 'form-control mb-3', 'placeholder': 'Firstname', 'id': 'form-lastname'}))
+    mobile = forms.CharField(
+        label='Mobile', min_length=4, max_length=50, widget=forms.TextInput(
+            attrs={'class': 'form-control mb-3', 'placeholder': 'Mobile', 'id': 'form-lastname'}))
 
     class Meta:
         model = Customer
-        fields = ('email', 'user_name', 'first_name',)
+        fields = ('email','name','mobile','id_number', 'date_of_birth', 'gender')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['user_name'].required = True
         self.fields['email'].required = True
+        self.fields['id_number'].required = True
+        self.fields['date_of_birth'].required = True
+        self.fields['gender'].required = True

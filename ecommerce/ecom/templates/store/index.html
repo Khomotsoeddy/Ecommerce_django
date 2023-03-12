@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Store - Low Prices in Books & more{% endblock %}
 {% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <div class="container">
   <div class="alert alert-primary fw600 rounded-0 border-0 pb-3" role="alert">
@@ -10,10 +11,119 @@
       <path
         d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
     </svg>
-    COVID-19 - <u>Click here for our latest updates</u> on our stores, website and contact centre. Thank you for
-    your patience and support.
   </div>
-  <div class="container">
+<style>
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  .products {
+    height: 50%;
+    max-width: auto;
+    align-items: baseline;
+    display: flex;
+    flex-wrap: wrap;
+    padding: auto;
+  }
+  .card {
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      max-width: 300px;
+      margin: auto;
+      text-align: center;
+      font-family: arial;
+      flex: 33.33%;
+      padding: 5px;
+    }
+    
+    .price {
+      color: grey;
+      font-size: 22px;
+    }
+    
+    .card button {
+      border: none;
+      outline: 0;
+      padding: 12px;
+      color: white;
+      background-color: #000;
+      text-align: center;
+      cursor: pointer;
+      width: 100%;
+      font-size: 18px;
+    }
+    
+    .card button:hover {
+      opacity: 0.7;
+    }
+
+    form.example input[type=text] {
+      padding: 10px;
+      font-size: 17px;
+      border: 1px solid grey;
+      float: left;
+      width: 80%;
+      background: #f1f1f1;
+    }
+
+      form.example button {
+      float: left;
+      width: 20%;
+      padding: 10px;
+      background: #2196F3;
+      color: white;
+      font-size: 17px;
+      border: 1px solid grey;
+      border-left: none;
+      cursor: pointer;
+    }
+
+    form.example button:hover {
+      background: #0b7dda;
+    }
+
+    form.example::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+</style>
+
+  <form class="example" action="/">
+    <input type="text" placeholder="Search.." name="search">
+    <button type="submit"><i class="fa fa-search"></i></button>
+  </form>
+  
+
+  <div class="products">
+    {% if not products %}
+        <div class="col-12">There are currently no products active</div>
+    {% else %}
+
+      {% for product in products %}
+      <div class="card">
+        {% for image in product.product_image.all %}
+        {% if image.is_feature%}
+        
+        <div class='image'>
+          <img class="img-fluid" alt="Responsive image" src="https://www.shoprite.co.za/medias/10538316EA-checkers300Wx300H?context=bWFzdGVyfGltYWdlc3wxMTMzMTl8aW1hZ2UvcG5nfGltYWdlcy9oNzkvaGI1Lzg5NzE0MDI4MzgwNDYucG5nfGNkZDllYjk0MTk4Nzk0OTk5NWIyZjM1MDIxNTg2NjkxM2ExNTVhM2MyOGEzZjU3MGI1ZDg5NDc2ZmY5ODhkNjE"
+                alt="{{ image.image.alt_text }}">
+        </div>
+        {% endif %}
+        {% endfor %}
+
+        {% comment %} <img src="{{product.product_image}}" alt="{{product.product_name}}" style="width:100%"> {% endcomment %}
+        <p>
+          <a class="text-dark text-decoration-none"
+            href="{{ product.get_absolute_url }}">{{ product.title|slice:":50" }}...</a>
+        </p>
+        <p class="price">R{{product.regular_price}}</p>
+        {% comment %} <p>{{product.product_name}}</p> {% endcomment %}
+      </div>
+  {% endfor %}
+  {% endif %}
+  </div>
+  {% comment %} <div class="container">
     <div class="row">
       <div class="album py-5">
         <div class="pb-3">
@@ -28,6 +138,7 @@
             <div class="card border-0">
               {% for image in product.product_image.all %}
               {% if image.is_feature%}
+              
               <img class="img-fluid" alt="Responsive image" src="{{ image.image.url }}"
                 alt="{{ image.image.alt_text }}">
               {% endif %}
@@ -46,6 +157,6 @@
         {% endif %}
       </div>
     </div>
-  </div>
+  </div> {% endcomment %}
 
   {% endblock %}
