@@ -31,5 +31,6 @@ typing-extensions
 urllib3
 Serializers
 djangorestframework
-
-
+psycopg2
+dj-database-url
+gunicorn
