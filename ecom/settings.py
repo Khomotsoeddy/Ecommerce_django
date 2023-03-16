@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     "checkout",
     'rest_framework',
     'inquiry',
-    'phone_field',  
 ]
 
 MIDDLEWARE = [
