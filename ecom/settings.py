@@ -45,7 +45,11 @@ INSTALLED_APPS = [
     "mptt",
     "checkout",
     'rest_framework',
+<<<<<<< HEAD
     'inquiry',
+=======
+    'inquiry',  
+>>>>>>> 3ec1428 (fix bugs)
 ]
 
 MIDDLEWARE = [
