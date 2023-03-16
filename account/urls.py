@@ -68,6 +68,7 @@ urlpatterns = [
     path("addresses/delete/<slug:id>/", views.delete_address, name="delete_address"),
     path("addresses/set_default/<slug:id>/", views.set_default, name="set_default"),
     path("user_orders/", views.user_orders, name="user_orders"),
+    path("order_detail", views.order_detail, name='order_detail'),
     # Wish List
     path("wishlist", views.wishlist, name="wishlist"),
     path("wishlist/add_to_wishlist/<int:id>", views.add_to_wishlist, name="user_wishlist"),

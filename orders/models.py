@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 
 from store.models import Product
 
@@ -29,7 +30,6 @@ class Order(models.Model):
     def __str__(self):
         return str(self.created)
 
-
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name="items", on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name="order_items", on_delete=models.CASCADE)
@@ -38,3 +38,9 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return str(self.id)
+    
+class OrderDeliveryOption(models.Model):
+    order = models.CharField(blank=True, max_length=100)
+    delivery_option = models.CharField(blank=True, max_length=3)
+    
+

@@ -28,6 +28,7 @@
             <li class="item small">{{order.address1}}</li>
             <li class="item small">{{order.address2}}</li>
             <li class="item small">{{order.post_code}}</li>
+            <li class="item small">Order# {{order.id}}</li>
           </ul>
           </div>
         </div>
@@ -37,8 +38,11 @@
       </div>
       <div class="col-md-5 col-lg-4 order-md-last p-0 order-3">
         <div class="d-grid gap-2 ">
-          <button class="btn btn-warning" type="button">Problem with order</button>
-          <button class="btn btn-light" type="button">Leave a review</button>
+          <form class='form' role="form" action="{% url 'account:order_detail' %}">
+            <input type="text" hidden name='order_id' value={{order.id}}/>
+            <button class="btn btn-warning"  type="submit">View order</button>
+          </form>
+          {% comment %} <button class="btn btn-light" type="button">Leave a review</button> {% endcomment %}
         </div>
       </div>
       <div class="col-md-7 col-lg-8 p-0">
@@ -46,16 +50,16 @@
         <div class="card mb-3 border-0">
           <div class="row g-0">
             <div class="col-md-2 d-none d-md-block">
-            {% for image in item.product.product_image.all %}
-            {% if image.is_feature %}
-            <img class="img-fluid" alt="Responsive image" src="{{ image.image.url }}" alt="{{ image.image.alt_text }}">
-            {% endif %}
-            {% endfor %}
+            {% comment %} {% for image in item.product.product_image.all %}
+            {% if image.is_feature %} {% endcomment %}
+            <img class="img-fluid" alt="Responsive image" src="{{ item.product.product_image }}" alt="">
+            {% comment %} {% endif %}
+            {% endfor %} {% endcomment %}
             </div>
             <div class="col-md-10">
               <div class="card-body p-3">
                 <a class="text-decoration-none" href="{{ item.product.get_absolute_url }}">
-                  <p class="card-text small">{{item.product|title}}</p>
+                  <p class="card-text small">{{item.product.product_name|title}}</p>
                 </a>
               </div>
             </div>

@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from checkout.serializer import DeliveryOptionsSerializer, PaymentSelectionsSerializer
-from orders.models import Order, OrderItem
+from orders.models import Order, OrderDeliveryOption, OrderItem
 from paypalcheckoutsdk.orders import OrdersGetRequest, OrdersCaptureRequest
 from .paypal import PayPalClient
 from rest_framework import viewsets
@@ -28,6 +28,8 @@ def basket_update_delivery(request):
         updated_total_price = basket.basket_update_delivery(delivery_type.delivery_price)
 
         session = request.session
+
+        request.session['delivery_option'] = delivery_option
         if "purchase" not in request.session:
             session["purchase"] = {
                 "delivery_id": delivery_type.id,
@@ -49,8 +51,6 @@ def delivery_address(request):
         return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
     addresses = Address.objects.filter(customer=request.user).order_by("-default")
-    
-    print(addresses)
     
     if len(addresses) ==0:
         return render(request, "account/dashboard/addresses.html")
@@ -116,7 +116,11 @@ def payment_complete(request):
     print(order)
     order_id = order.pk
 
+    delivery_option = request.session['delivery_option'] 
+
+    OrderDeliveryOption.objects.create(order=order_id,delivery_option=delivery_option )
     for item in basket:
+        print(item["product"])
         OrderItem.objects.create(order_id=order_id, product=item["product"], price=item["price"], quantity=item["qty"])
 
     return JsonResponse("Payment completed!", safe=False, )

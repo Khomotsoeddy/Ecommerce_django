@@ -5,6 +5,7 @@ from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
 from django.core.mail import send_mail
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from phonenumber_field.modelfields import PhoneNumberField
 
 class CustomAccountManager(BaseUserManager):
 
@@ -39,7 +40,7 @@ class CustomAccountManager(BaseUserManager):
 class Customer(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     name = models.CharField(max_length=150)
-    mobile = models.CharField(max_length=10, blank=True,unique=True)
+    mobile = PhoneNumberField(unique = True)
     id_number = models.CharField(max_length=13, blank=False,unique=True)
     date_of_birth = models.DateField(null=True, blank=True)
     age_number = models.CharField(max_length=3,blank=True)
@@ -78,7 +79,7 @@ class Address(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     customer = models.ForeignKey(Customer, verbose_name=_("Customer"), on_delete=models.CASCADE)
     full_name = models.CharField(_("Full Name"), max_length=150)
-    phone = models.CharField(_("Phone Number"), max_length=50)
+    phone =PhoneNumberField(unique= True)
     postcode = models.CharField(_("Postcode"), max_length=50)
     address_line = models.CharField(_("Address Line 1"), max_length=255)
     address_line2 = models.CharField(_("Address Line 2"), max_length=255)

@@ -9,11 +9,12 @@ from django.urls import reverse
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from account.serializer import AddressSerializer, CustomersSerializer
+from checkout.models import DeliveryOptions
 from rest_framework import viewsets
-from orders.models import Order
+from orders.models import Order, OrderDeliveryOption
 from orders.views import user_orders
 from store.models import Product
-
+import re
 import calendar
 from datetime import date, datetime
 from email.mime.multipart import MIMEMultipart
@@ -36,10 +37,10 @@ def add_to_wishlist(request, id):
     product = get_object_or_404(Product, id=id)
     if product.users_wishlist.filter(id=request.user.id).exists():
         product.users_wishlist.remove(request.user)
-        messages.success(request, product.title + " has been removed from your WishList")
+        messages.success(request, product.product_name + " has been removed from your WishList")
     else:
         product.users_wishlist.add(request.user)
-        messages.success(request, "Added " + product.title + " to your WishList")
+        messages.success(request, "Added " + product.product_name + " to your WishList")
     return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
 
@@ -47,29 +48,6 @@ def add_to_wishlist(request, id):
 def dashboard(request):
     orders = user_orders(request)
     return render(request, "account/dashboard/dashboard.html", {"section": "profile", "orders": orders})
-
-
-@login_required
-def edit_details(request):
-    if request.method == "POST":
-
-        print(request.user.id)
-        user = Customer.objects.get(id=request.user.id)
-        
-        user.name = request.POST['name']
-        user.mobile = request.POST['mobile']
-        user.save()
-        user_form = UserEditForm(instance=user, data=request.POST)
-
-        print(user_form.is_valid())
-        if user_form.is_valid():
-            # user_form.first_name = request.POST['first_name']
-            user_form.save()
-    else:
-        user_form = UserEditForm(instance=request.user)
-
-    return render(request, "account/dashboard/edit_details.html", {"user_form": user_form})
-
 
 @login_required
 def delete_user(request):
@@ -197,6 +175,37 @@ def add_address(request):
         address_form = UserAddressForm()
     return render(request, "account/dashboard/edit_addresses.html", {"form": address_form})
 
+@login_required
+def edit_details(request):
+    if request.method == "POST":
+
+        user = Customer.objects.get(id=request.user.id)
+        
+        user.name = request.POST['name']
+        mobile = request.POST['mobile']
+
+        if(len(mobile) != 12):
+            messages.error(request, 'Incorrect number, record is not updated!!')
+        else:
+            pattern=r"[+27][^.......$]"  
+            match = re.match(pattern,mobile) 
+            if not match:
+                messages.error(request, 'Incorrect number format, record is not updated!!')
+            else:
+                user.mobile = mobile
+                user.save()
+        # user_form = UserEditForm(instance=user, data=request.POST)
+        user_form = UserEditForm(instance=user)
+        print(user_form.is_valid())
+        if user_form.is_valid():
+            # user_form.name = request.POST['name']
+            # user_form.mobile = request.POST['mobile']
+            print('saved')
+            user_form.save()
+    else:
+        user_form = UserEditForm(instance=request.user)
+
+    return render(request, "account/dashboard/edit_details.html", {"user_form": user_form})
 
 @login_required
 def edit_address(request, id):
@@ -235,7 +244,22 @@ def set_default(request, id):
 def user_orders(request):
     user_id = request.user.id
     orders = Order.objects.filter(user_id=user_id).filter(billing_status=True)
+    print(orders)
     return render(request, "account/dashboard/user_orders.html", {"orders": orders})
+
+def order_detail(request):
+    user_id = request.user.id
+
+    order_id = request.GET['order_id']
+
+    option = OrderDeliveryOption.objects.filter(order=order_id[0])
+    orders = Order.objects.filter(user_id=user_id).filter(billing_status=True).filter(id=order_id[0])
+    for op in option:
+        delivery_option = DeliveryOptions.objects.filter(id=op.delivery_option)
+        print(delivery_option)
+    
+    
+    return render(request, "account/dashboard/order_detail.html",{"orders": orders, 'delivery_option':delivery_option})
 
 class CustomersListView(viewsets.ModelViewSet):
     serializer_class = CustomersSerializer

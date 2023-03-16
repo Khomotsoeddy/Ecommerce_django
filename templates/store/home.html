@@ -3,92 +3,41 @@
 
 {% block content %}
 
-{% comment %} <style>
-		
-		header {
-			background-color: #333;
-			color: #fff;
-			padding: 10px;
-			text-align: center;
-			font-size: 24px;
-			font-weight: bold;
-			text-transform: uppercase;
-		}
-		
-    .slideshow-container {
-      width:100%;
-      height:100%;
-    }
-                
-    body{
-      overflow:hidden;
-    }
-    
-</style> {% endcomment %}
+ <!-- banner bg main start -->
+<div style="position: relative;text-align: center;color: white;padding: 0">
+  <img style="width:100%" src="media\images\pic.png" >
 
-
-
-	{% comment %} <header style='
-    background-color: #333;
-    color: #fff;
-    padding: 10px;
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    text-transform: uppercase;
-  }'>Online Shopping</header> {% endcomment %}
-	
-
-  <div class='pisvvs' style='width:100%;height:100%;'>
-
-    <img src='http://khomotso.pythonanywhere.com/media/images/image1.jfif'>
-
+  <div style="color: black; position: absolute;top: 50%;left: 70%;transform: translate(-50%, -50%);" >
+    <div class="carousel-item active">
+      <div class="row">
+         <div class="col-sm-12">
+           <h1 class="banner_taital">Welcome to MegaShop <br>Take as many as you can !!!</h1>
+            <div class="buynow_bt">
+              <a href="{% url "store:store_home" %}">Shop Now</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
-<div style='width:100%;
-            height:100%;'
-            class="slideshow-container">
-
-    <div class="mySlides fade">
-        <img src="http://khomotso.pythonanywhere.com/media/images/image1.jfif" style="width:100%">
-    </div>
-
-    <div class="mySlides fade">
-        <img src="http://khomotso.pythonanywhere.com/media/images/image2.jfif" style="width:100%">
-    </div>
-
-    <div class="mySlides fade">
-        <img src="http://khomotso.pythonanywhere.com/media/images/image3.png" style="width:100%">
-    </div>
-</div>
-        
-<br>
-
-<div style="text-align:center">
-  <span class="dot"></span> 
-  <span class="dot"></span> 
-  <span class="dot"></span> 
 </div>
 
+<script src="js/jquery.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/jquery-3.0.0.min.js"></script>
+<script src="js/plugin.js"></script>
+
+<!-- sidebar -->
+<script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="js/custom.js"></script>
 <script>
-  let slideIndex = 0;
-  showSlides();
-
-  function showSlides() {
-    let i;
-    let slides = document.getElementsByClassName("mySlides");
-    let dots = document.getElementsByClassName("dot");
-    for (i = 0; i > slides.length; i++) {
-      slides[i].style.display = "none";  
-    }
-    slideIndex++;
-    if (slideIndex > slides.length) {slideIndex = 1;}    
-    for (i = 0; i < dots.length; i++) {
-      dots[i].className = dots[i].className.replace(" active", "");
-    }
-    slides[slideIndex-1].style.display = "block";  
-    dots[slideIndex-1].className += " active";
-    setTimeout(showSlides, 1500); // Change image every 2 seconds
+  function openNav() {
+    document.getElementById("mySidenav").style.width = "250px";
+  }
+  
+  function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
   }
 </script>
 {% endblock %}

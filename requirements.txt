@@ -34,3 +34,4 @@ djangorestframework
 psycopg2
 dj-database-url
 gunicorn
+django-phonenumber-field[phonenumbers]

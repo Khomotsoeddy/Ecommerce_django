@@ -44,7 +44,9 @@ INSTALLED_APPS = [
     "orders",
     "mptt",
     "checkout",
-    'rest_framework'
+    'rest_framework',
+    'inquiry',
+    'phone_field',  
 ]
 
 MIDDLEWARE = [
@@ -70,7 +72,6 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "store.context_processors.categories",
                 "basket.context_processors.basket",
             ],
         },

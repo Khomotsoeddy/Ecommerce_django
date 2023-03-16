@@ -1,9 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import (AuthenticationForm, PasswordResetForm,
                                        SetPasswordForm)
-from django.core.validators import MaxValueValidator, MinValueValidator 
 
 from .models import Customer, Address
+import re
 
 class UserAddressForm(forms.ModelForm):
     class Meta:
@@ -13,20 +13,20 @@ class UserAddressForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["full_name"].widget.attrs.update(
-            {"class": "form-control mb-2 account-form", "placeholder": "Full Name"}
+            {"class": "form-control mb-2 account-form", "placeholder": "Recipient Full Name"}
         )
         self.fields["phone"].widget.attrs.update({"class": "form-control mb-2 account-form", "placeholder": "Phone"})
         self.fields["address_line"].widget.attrs.update(
-            {"class": "form-control mb-2 account-form", "placeholder": "Full Name"}
+            {"class": "form-control mb-2 account-form", "placeholder": "Street Name"}
         )
         self.fields["address_line2"].widget.attrs.update(
-            {"class": "form-control mb-2 account-form", "placeholder": "Full Name"}
+            {"class": "form-control mb-2 account-form", "placeholder": "Surbub Name"}
         )
         self.fields["town_city"].widget.attrs.update(
-            {"class": "form-control mb-2 account-form", "placeholder": "Full Name"}
+            {"class": "form-control mb-2 account-form", "placeholder": "City"}
         )
         self.fields["postcode"].widget.attrs.update(
-            {"class": "form-control mb-2 account-form", "placeholder": "Full Name"}
+            {"class": "form-control mb-2 account-form", "placeholder": "Postal code"}
         )
 
 
@@ -72,8 +72,13 @@ class RegistrationForm(forms.ModelForm):
     
     def clean_mobile(self):
         mobile = self.cleaned_data['mobile']
-        if Customer.objects.filter(mobile=mobile).exists():
-            raise forms.ValidationError("Mobile number already exists")
+        if(len(mobile) != 12):
+            raise forms.ValidationError("Incorrect format")
+        else:
+            pattern=r"[+27][^.......$]"  
+            match = re.match(pattern,mobile) 
+            if not match:
+                raise forms.ValidationError("Incorrect format")
         return mobile
 
     def clean_password2(self):
@@ -98,9 +103,9 @@ class RegistrationForm(forms.ModelForm):
         self.fields['name'].widget.attrs.update(
             {'class': 'form-control mb-3', 'placeholder': 'Name'})
         self.fields['mobile'].widget.attrs.update(
-            {'class': 'form-control mb-3', 'placeholder': 'Mibile'})
+            {'class': 'form-control mb-3', 'placeholder': 'Mobile (+27711110000)'})
         self.fields['id_number'].widget.attrs.update(
-            {'class': 'form-control mb-3', 'placeholder': 'id_number'})
+            {'class': 'form-control mb-3', 'placeholder': 'ID Number'})
         self.fields['email'].widget.attrs.update(
             {'class': 'form-control mb-3', 'placeholder': 'E-mail', 'name': 'email', 'id': 'id_email'})
         self.fields['password'].widget.attrs.update(
@@ -136,16 +141,16 @@ class UserEditForm(forms.ModelForm):
 
     email = forms.EmailField(
         label='Account email (can not be changed)', max_length=200, widget=forms.TextInput(
-            attrs={'class': 'form-control mb-3', 'placeholder': 'email', 'id': 'form-email', 'readonly': 'readonly'}))
+            attrs={'class': 'form-control mb-3', 'placeholder': 'Email', 'id': 'form-email', 'readonly': 'readonly'}))
     id_number = forms.EmailField(
         label='Identity Number(can not be changed)', max_length=200, widget=forms.TextInput(
-            attrs={'class': 'form-control mb-3', 'placeholder': 'id_number', 'id': 'form-idnumber', 'readonly': 'readonly'}))
+            attrs={'class': 'form-control mb-3', 'placeholder': 'ID Number', 'id': 'form-idnumber', 'readonly': 'readonly'}))
     gender = forms.EmailField(
         label='Gender(can not be changed)', max_length=200, widget=forms.TextInput(
-            attrs={'class': 'form-control mb-3', 'placeholder': 'gender', 'id': 'form-gender', 'readonly': 'readonly'}))
+            attrs={'class': 'form-control mb-3', 'placeholder': 'Gender', 'id': 'form-gender', 'readonly': 'readonly'}))
     date_of_birth = forms.EmailField(
         label='Identity Number(can not be changed)', max_length=200, widget=forms.TextInput(
-            attrs={'class': 'form-control mb-3', 'placeholder': 'date_of_birth', 'id': 'form-date_of_birth', 'readonly': 'readonly'}))
+            attrs={'class': 'form-control mb-3', 'placeholder': 'Date of Birth', 'id': 'form-date_of_birth', 'readonly': 'readonly'}))
 
     user_name = forms.CharField(
         label='Firstname', min_length=4, max_length=50, widget=forms.TextInput(
@@ -156,7 +161,19 @@ class UserEditForm(forms.ModelForm):
             attrs={'class': 'form-control mb-3', 'placeholder': 'Firstname', 'id': 'form-lastname'}))
     mobile = forms.CharField(
         label='Mobile', min_length=4, max_length=50, widget=forms.TextInput(
-            attrs={'class': 'form-control mb-3', 'placeholder': 'Mobile', 'id': 'form-lastname'}))
+            attrs={'class': 'form-control mb-3', 'placeholder': 'Mobile (+27711110000)', 'id': 'form-lastname'}))
+    
+    def clean_mobile(self):
+        mobile = self.cleaned_data['mobile']
+
+        if(len(mobile) != 12):
+            raise forms.ValidationError("Incorrect format")
+        else:
+            pattern=r"[+27][^.......$]"  
+            match = re.match(pattern,mobile) 
+            if not match:
+                raise forms.ValidationError("Incorrect format")
+        return mobile
 
     class Meta:
         model = Customer

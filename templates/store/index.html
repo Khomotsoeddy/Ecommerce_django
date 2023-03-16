@@ -93,37 +93,8 @@
     <input type="text" placeholder="Search.." name="search">
     <button type="submit"><i class="fa fa-search"></i></button>
   </form>
-  
 
-  <div class="products">
-    {% if not products %}
-        <div class="col-12">There are currently no products active</div>
-    {% else %}
-
-      {% for product in products %}
-      <div class="card">
-        {% for image in product.product_image.all %}
-        {% if image.is_feature%}
-        
-        <div class='image'>
-          <img class="img-fluid" alt="Responsive image" src="https://www.shoprite.co.za/medias/10538316EA-checkers300Wx300H?context=bWFzdGVyfGltYWdlc3wxMTMzMTl8aW1hZ2UvcG5nfGltYWdlcy9oNzkvaGI1Lzg5NzE0MDI4MzgwNDYucG5nfGNkZDllYjk0MTk4Nzk0OTk5NWIyZjM1MDIxNTg2NjkxM2ExNTVhM2MyOGEzZjU3MGI1ZDg5NDc2ZmY5ODhkNjE"
-                alt="{{ image.image.alt_text }}">
-        </div>
-        {% endif %}
-        {% endfor %}
-
-        {% comment %} <img src="{{product.product_image}}" alt="{{product.product_name}}" style="width:100%"> {% endcomment %}
-        <p>
-          <a class="text-dark text-decoration-none"
-            href="{{ product.get_absolute_url }}">{{ product.title|slice:":50" }}...</a>
-        </p>
-        <p class="price">R{{product.regular_price}}</p>
-        {% comment %} <p>{{product.product_name}}</p> {% endcomment %}
-      </div>
-  {% endfor %}
-  {% endif %}
-  </div>
-  {% comment %} <div class="container">
+  <div class="container">
     <div class="row">
       <div class="album py-5">
         <div class="pb-3">
@@ -136,19 +107,20 @@
           {% for product in products %}
           <div class="col">
             <div class="card border-0">
-              {% for image in product.product_image.all %}
-              {% if image.is_feature%}
+              {% comment %} {% for image in product.product_image.all %}
+              {% if image.is_feature%} {% endcomment %}
               
-              <img class="img-fluid" alt="Responsive image" src="{{ image.image.url }}"
-                alt="{{ image.image.alt_text }}">
-              {% endif %}
-              {% endfor %}
+              <a href="{{ product.get_absolute_url }}"><img class="img-fluid" alt="" src="{{ product.product_image }}"
+                alt=""></a>
+              {% comment %} {% endif %}
+              {% endfor %} {% endcomment %}
               <div class="card-body px-0">
                 <p class="card-text">
                   <a class="text-dark text-decoration-none"
-                    href="{{ product.get_absolute_url }}">{{ product.title|slice:":50" }}...</a>
+                    
+                    href="{{ product.get_absolute_url }}">{{ product.product_name|slice:":50" }}...</a>
                 </p>
-                <div class="fw-bold">R{{product.regular_price}}</div>
+                <div class="fw-bold">R{{product.price}}</div>
               </div>
             </div>
           </div>
@@ -157,6 +129,6 @@
         {% endif %}
       </div>
     </div>
-  </div> {% endcomment %}
+  </div>
 
   {% endblock %}
