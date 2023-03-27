@@ -1,3 +1,4 @@
+import logging as logger
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -11,6 +12,7 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from account.serializer import AddressSerializer, CustomersSerializer
 from checkout.models import DeliveryOptions
 from rest_framework import viewsets
+from inquiry.models import Inquiry
 from orders.models import Order, OrderDeliveryOption
 from orders.views import user_orders
 from store.models import Product
@@ -20,6 +22,9 @@ from datetime import date, datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib 
+
+from dateutil.parser import parse
+import string
 
 from .forms import RegistrationForm, UserAddressForm, UserEditForm
 from .models import Address, Customer
@@ -47,7 +52,13 @@ def add_to_wishlist(request, id):
 @login_required
 def dashboard(request):
     orders = user_orders(request)
-    return render(request, "account/dashboard/dashboard.html", {"section": "profile", "orders": orders})
+
+    cust_cont = Customer.objects.all().count()
+    prop_cont =  Product.objects.all().count()
+    ord_cont = Order.objects.all().count()
+    quer_cont = Inquiry.objects.all().count()
+
+    return render(request, "account/dashboard/dashboard.html", {"section": "profile", "orders": orders, 'cust_total':cust_cont, 'prop_cont':prop_cont, 'ord_cont': ord_cont,"quer_cont":quer_cont})
 
 @login_required
 def delete_user(request):
@@ -65,74 +76,84 @@ def account_register(request):
         return redirect("account:dashboard")
 
     if request.method == "POST":
-        registerForm = RegistrationForm(request.POST)
-        if registerForm.is_valid():
-            user = registerForm.save(commit=False)
-            user.email = registerForm.cleaned_data["email"]
-            user.set_password(registerForm.cleaned_data["password"])
-            user.mobile = registerForm.cleaned_data['mobile']
-            user.id_number = registerForm.cleaned_data['id_number']
-            
-            user_id = user.id_number
+        try:    
+            registerForm = RegistrationForm(request.POST)
+            if registerForm.is_valid():
+                user = registerForm.save(commit=False)
+                user.email = registerForm.cleaned_data["email"]
+                user.set_password(registerForm.cleaned_data["password"])
+                user.mobile = registerForm.cleaned_data['mobile']
+                user.id_number = registerForm.cleaned_data['id_number']
+                
+                user_id = user.id_number
 
-            year = int(user_id[0:2])
-            month = int(user_id[2:4])
+                year = int(user_id[0:2])
+                month = int(user_id[2:4])
+                day = int(user_id[4:6])
 
-            day = int(user_id[4:6])
+                current_year = datetime.now().year
 
-            current_year = datetime.now().year
+                if year < 22: 
+                    year += 2000
+                else:
+                    year += 1900
 
-            if year < 22: 
-                year += 2000
-            else:
-                year += 1900
-            
-            birthdate= date(year,month,day)
+                age = current_year - year
 
-            age = current_year - year
+                gender_digit = int(user_id[6])
+                gender = 'Male' if gender_digit >= 5 else 'Female'
 
-            gender_digit = int(user_id[6])
-            gender = 'Male' if gender_digit >= 5 else 'Female'
+                user.age_number = age
+                user.gender = gender
+                birthdate= date(year,month,day)
+                user.date_of_birth = birthdate
+                user.is_active = False
+                user.save()
+                # try:
+                    
+        
 
-            user.date_of_birth = birthdate
-            user.	age_number = age
-            user.gender = gender
-            user.is_active = False
-            user.save()
-            current_site = get_current_site(request)
-            subject = "Activate your Account"
-            message = render_to_string(
-                "account/registration/account_activation_email.html",
-                {
-                    "user": user,
-                    "domain": current_site.domain,
-                    "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                    "token": account_activation_token.make_token(user),
-                },
-            )
-            
-            me = 'powerwm111@gmail.com'
-            you = user.email
-            password = 'kddxamltpmiawtra'
-            email_body = "<html><boby>"+"Hi "+user.name+"\n\nYour account has successfully created. Please click below link to activate your account\n\n\n"+'http://'+current_site.domain+'/account/activate/'+urlsafe_base64_encode(force_bytes(user.pk))+'/'+account_activation_token.make_token(user)+"\n\nRegards\nMega Team"+"</body></html>"
-            email_message = MIMEMultipart('alternative',None,[MIMEText(email_body, 'html')])
+                current_site = get_current_site(request)
+                subject = "Activate your Account"
+                message = render_to_string(
+                    "account/registration/account_activation_email.html",
+                    {
+                        "user": user,
+                        "domain": current_site.domain,
+                        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                        "token": account_activation_token.make_token(user),
+                    },
+                )
+                
+                me = 'powerwm111@gmail.com'
+                you = user.email
+                password = 'kddxamltpmiawtra'
+                email_body = "<html><boby>"+"Hi "+user.name+"\n\nYour account has successfully created. Please click below link to activate your account\n\n\n"+'http://'+current_site.domain+'/account/activate/'+urlsafe_base64_encode(force_bytes(user.pk))+'/'+account_activation_token.make_token(user)+"\n\nRegards\nMega Team"+"</body></html>"
+                email_message = MIMEMultipart('alternative',None,[MIMEText(email_body, 'html')])
 
-            email_message['subject'] = subject
-            email_message['from'] = me
-            email_message['to'] = user.email
+                email_message['subject'] = subject
+                email_message['from'] = me
+                email_message['to'] = user.email
 
-            try:
-                server = smtplib.SMTP('smtp.gmail.com:587')
-                server.ehlo()
-                server.starttls()
-                server.login(me,password)
-                server.sendmail(me,you,email_message.as_string())
-                server.quit()
-            except Exception as e:
-                print(f'error in sending email: {e}')
+                try:
+                    server = smtplib.SMTP('smtp.gmail.com:587')
+                    server.ehlo()
+                    server.starttls()
+                    server.login(me,password)
+                    server.sendmail(me,you,email_message.as_string())
+                    server.quit()
+                except Exception as e:
+                    print(f'error in sending email: {e}')
 
-            user.email_user(subject=subject, message=message)
-            return render(request, "account/registration/register_email_confirm.html", {"form": registerForm})
+                user.email_user(subject=subject, message=message)
+                return render(request, "account/registration/register_email_confirm.html", {"form": registerForm})
+        except Exception as e:
+            # messages.add_message(request, messages.ERROR, e)
+            # if on_error == 'error':
+            # raise
+            # logger.error('Failed to upload to ftp: '+ str(e),exc_info=True)
+            # print('invalid ID: ',e)
+            messages.error(request, 'Invalid ID number')
     else:
         registerForm = RegistrationForm()
     return render(request, "account/registration/register.html", {"form": registerForm})
@@ -148,6 +169,7 @@ def account_activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
+        print('this side')
         return redirect("account:dashboard")
     else:
         return render(request, "account/registration/activation_invalid.html")
@@ -192,8 +214,11 @@ def edit_details(request):
             if not match:
                 messages.error(request, 'Incorrect number format, record is not updated!!')
             else:
-                user.mobile = mobile
-                user.save()
+                if Customer.objects.filter(mobile = user.mobile).exists():
+                    messages.error(request, 'Mobile already exists')
+                else:
+                    user.mobile = mobile
+                    user.save()
         # user_form = UserEditForm(instance=user, data=request.POST)
         user_form = UserEditForm(instance=user)
         print(user_form.is_valid())
@@ -256,7 +281,6 @@ def order_detail(request):
     orders = Order.objects.filter(user_id=user_id).filter(billing_status=True).filter(id=order_id[0])
     for op in option:
         delivery_option = DeliveryOptions.objects.filter(id=op.delivery_option)
-        print(delivery_option)
     
     
     return render(request, "account/dashboard/order_detail.html",{"orders": orders, 'delivery_option':delivery_option})

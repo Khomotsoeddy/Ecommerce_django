@@ -89,8 +89,9 @@
     }
 </style>
 
-  <form class="example" action="/">
-    <input type="text" placeholder="Search.." name="search">
+  <form method="post" class="example" action="{% url "store:store_home"%}">
+    {% csrf_token %}
+    <input type="text" placeholder="Search.." name="search_data">
     <button type="submit"><i class="fa fa-search"></i></button>
   </form>
 

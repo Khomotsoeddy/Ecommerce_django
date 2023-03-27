@@ -7,10 +7,10 @@
   <h1 class="h2">User Orders</h1>
 </div>
 <div class="col-12 d-flex justify-content-between">
-  <div>Manage your <b>orders</b> and personal details</div>
+  <div>Manage your <b>orders</b></div>
 </div>
 <hr />
- <div class="container">
+  <div class="container">
     {% for order in orders %}
     <div class="row g-3">
       <div class="col-12 bg-light p-3 d-flex justify-content-between">
@@ -36,15 +36,6 @@
           Total paid: <span class="fw-bold">R{{ order.total_paid }}</span>
         </div>
       </div>
-      <div class="col-md-5 col-lg-4 order-md-last p-0 order-3">
-        <div class="d-grid gap-2 ">
-          <form class='form' role="form" action="{% url 'account:order_detail' %}">
-            <input type="text" hidden name='order_id' value={{order.id}}/>
-            <button class="btn btn-warning"  type="submit">View order</button>
-          </form>
-          {% comment %} <button class="btn btn-light" type="button">Leave a review</button> {% endcomment %}
-        </div>
-      </div>
       <div class="col-md-7 col-lg-8 p-0">
         {% for item in order.items.all %}
         <div class="card mb-3 border-0">
@@ -68,6 +59,18 @@
         {% endfor %}
       </div>
     </div>
+
+    <div class="col-md-5 col-lg-4 order-md-last p-0 order-3">
+      <div class="d-grid gap-2 ">
+        <form class='form' role="form" action="{% url 'account:order_detail' %}">
+          <input type="text" hidden name='order_id' value={{order.id}}/>
+          <button class="btn btn-warning"  type="submit">View order</button>
+        </form>
+        {% comment %} <button class="btn btn-light" type="button">Leave a review</button> {% endcomment %}
+      </div>
+    </div>
+
+    <hr />
     {% endfor %}
   </div>
 

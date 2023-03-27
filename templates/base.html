@@ -13,8 +13,16 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous">
   </script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <link href="https://www.w3.org/WAI/content-assets/wai-aria-practices/patterns/table/examples/css/sortable-table.css" rel="stylesheet">
+  {% comment %} <script href="https://www.w3.org/WAI/content-assets/wai-aria-practices/patterns/table/examples/js/sortable-table.js"></script> {% endcomment %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'account/css/custom.css' %}">
 
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
   <!-- bootstrap css -->
 <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 <!-- style css -->
@@ -53,8 +61,13 @@
                 d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z" />
             </svg>
           </a>
+          <div class="container-fluid px-md-4">
+            <div class="d-flex w-100 navbar-collapse">
+              <a class="navbar-brand d-flex-inline" href="{% url "store:store_home" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link"><i class="fa-brands fa-product-hunt"></i> Products</a>
+            </div>
+          </div>
           <ul class="navbar-nav me-auto mb-2 mb-md-0">
-            <li class="nav-item dropdown">
+            <li hidden class="nav-item dropdown">
               <a class="nav-link dropdown-toggle d-none d-md-block fw500" href="" id="navbarDropdown" role="button"
                 data-bs-toggle="dropdown" aria-expanded="false">
                 products
@@ -70,11 +83,12 @@
                 <li {% if category.slug == c.slug %}class="selected" {% endif %}>
                   <a class="dropdown-item" href="{{ c.get_absolute_url }}">{{ c.name|title }}</a>
                 </li>
-                {% endfor %} {% endcomment %}
+                {% endfor %} 
+                {% endcomment%}
               </ul>
             </li>
-
-          </ul>
+          </ul> 
+         
           <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
             data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false"
             aria-label="Toggle navigation">
@@ -110,12 +124,20 @@
                         <h6 class="card-title">My Account</h6>
                         <ul class="list-group list-group-flush dropdown-account-link">
                           {% if user.is_authenticated %}
-                          <a href="{% url "account:dashboard" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link">Dashboard</a>
-                          <a href="{% url "account:user_orders" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link">Orders</a>
-                          <a href="{% url "account:wishlist" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link">Wish List</a>
-                          <a href="{% url "account:logout" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link">Logout</a>      
+                              {% if request.user.is_superuser %}
+                              <a href="{% url "account:dashboard" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link"><i class="fa-sharp fa-solid fa-chart-line"></i> Dashboard</a>
+                                  <a href='#' class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link"><i class='fa fa-user' aria-hidden='true'></i> Customers</a>
+                                  <a href="{% url "orders:orders" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link"><i class='fa fa-bars' aria-hidden='true'></i> Orders</a>
+                                  <a href='#' class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link"><i class='fa fa-question-circle' aria-hidden='true'></i> Customers</a>
+                                  <a href="{% url "account:logout" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>      
+                              {% else %}
+                              <a href="{% url "account:dashboard" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link"><i class="fa-sharp fa-solid fa-chart-line"></i> Dashboard</a>
+                              <a href="{% url "account:user_orders" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link"><i class='fa fa-bars' aria-hidden='true'></i> Orders</a>
+                              <a href="{% url "account:wishlist" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link"><i class="fa-solid fa-heart"></i> Wish List</a>
+                              <a href="{% url "account:logout" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>      
+                              {% endif %}
                           {% else %}
-                          <a href="{% url "account:login" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link">Login</a>
+                          <a href="{% url "account:login" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
                           {% endif %}
                         </ul>
                       </div>
@@ -125,6 +147,8 @@
               </ul>
             </div>
           </div>
+            {% if request.user.is_superuser %}
+            {% else %}
           <a type="button" role="button" href="{% url "basket:basket_summary" %}"
             class="btn btn-outline-secondary border-0 basket-btn">
             {% with total_qty=basket|length %}
@@ -145,6 +169,7 @@
             </div>
             <span class="fs15 fw500">Basket</span>
           </a>
+          {% endif %}
         </div>
         <div class="d-md-none d-lg-none d-xl-none">
           <div class="collapse navbar-collapse" id="navbarCollapse">

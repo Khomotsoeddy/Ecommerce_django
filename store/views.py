@@ -10,10 +10,25 @@ def home(request):
     return render(request, 'store/home.html')
 
 def product_all(request):
-    # Product.objects.all().delete()
+    print(request.method)
+    if request.method == "POST":
+        deta =  request.POST['search_data']
+        print(deta)
+        products = Product.objects.filter(product_name__contains=deta)
+        print(products)
+        return render(request, "store/index.html", {"products": products})
 
-    
+    products = Product.objects.all()
+    return render(request, "store/index.html", {"products": products})
 
+def search_product(request):
+    # search =  request.GET['search']
+    # print('gotttt this',search)
+    products = Product.objects.get_or_create(product_name__contains = "carling")
+
+    return render(request, "store/index.html", {"products": products})
+
+def get_data(request):
     user_agents_list = [
         'Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36',
@@ -50,7 +65,7 @@ def product_all(request):
 
         #     picture_source = 'https://www.shoprite.co.za'+shoprite_product_soup.find('img',attrs={'class':'pdp__image__thumb'}).get('src')
         #     dirty_price = shoprite_product_soup.find('span',attrs={'class':'now'}).text
-        #     price = (dirty_price[2:11])
+        #     price = (dirty_price[2:9])
         #     product_name = shoprite_product_soup.find('h1',attrs={'class':'pdp__name'}).text
         #     print("details", picture_source,'\n',price,'\n',product_name)
 
@@ -75,7 +90,7 @@ def product_all(request):
 
         #     picture_source = 'https://www.checkers.co.za'+checkers_product_soup.find('img',attrs={'class':'pdp__image__thumb'}).get('src')
         #     dirty_price = checkers_product_soup.find('span',attrs={'class':'now'}).text
-        #     price = (dirty_price[2:11])
+        #     price = (dirty_price[2:9])
         #     product_name = checkers_product_soup.find('h1',attrs={'class':'pdp__name'}).text
         #     print("details", picture_source,'\n',price,'\n',product_name,"checkers")
 
@@ -86,58 +101,8 @@ def product_all(request):
         #     else:
         #         r = Product(product_name=product_name,product_image=picture_source,price =price ,shop_retail='Checkers')
         #         r.save()
+    return render(request, "account/dashboard/dashboard.html")
 
-# ==============================================================================================
-
-    #     shoprite_data = shoprite_soup.find_all('div',attrs={'class':'item-product'})
-        # checkers_data = checkers_soup.find_all('div',attrs={'class':'item-product'})
-
-        # print(checkers_data)
-
-    #     for pp in shoprite_data:
-    #         print('pictures','https://shoprite.co.za'+pp.find('img').get('src'))
-    #         print('price',pp.find('span').text)
-    #         price = pp.find('span').text
-    #         price1 = (price[2:])
-    #         print(price1)
-    #         print('title',pp.find('a').get('title'))
-    #         print('\n')
-
-    #         # r = Product.objects.get(product_name=pp.find('a').get('title'), shop_retail='Shoprite')
-
-    #         # if r.exists:
-    #         #     r.product_image = 'https://shoprite.co.za'+pp.find('img').get('src')
-    #         #     r.price = price1
-    #         #     r.save()
-    #         # else:
-    #         r = Product(product_name=pp.find('a').get('title'),product_image='https://shoprite.co.za'+pp.find('img').get('src'),price =price1 ,shop_retail='Shoprite')
-    #         r.save()
-
-    #     for pp in checkers_data:
-    #         print('pictures','https://www.checkers.co.za'+pp.find('img').get('src'))
-    #         print('price',pp.find('span').text)
-    #         price = pp.find('span').text
-    #         price1 = (price[2:])
-    #         print(price1)
-    #         print('title',pp.find('a').get('title'))
-    #         print('\n')
-
-    #         # r = Product.objects.get(product_name=pp.find('a').get('title'),shop_retail='Checkers')
-
-    #         # if r.exists:
-    #         #     r.product_image = 'https://www.checkers.co.za'+pp.find('img').get('src')
-    #         #     r.price = price1
-    #         #     r.save()
-    #         # else:
-    #         r = Product(product_name=pp.find('a').get('title'),product_image='https://www.checkers.co.za'+pp.find('img').get('src'),price =price1 ,shop_retail='Checkers')
-    #         r.save()
-
-    products = Product.objects.all()
-
-    for product in products:
-        print(product.product_name,'',product.price,'',product.product_image)
-
-    return render(request, "store/index.html", {"products": products})
 
 def product_detail(request, id):
 

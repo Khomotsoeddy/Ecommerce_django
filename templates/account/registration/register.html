@@ -7,6 +7,12 @@
   <h3 class="mb-2">Create an account</h3>
   <p class="mb-4">It's free and only takes a minute.</p>
 
+  {% if messages %}
+  <p>Please correct the following errors:</p>
+  {% for message in messages %}
+   {% if message.tags %}  <div class="alert alert-primary" role="alert">{{ message }}</div> {% endif %}
+  {% endfor %}
+{% endif %}
   {% if form.errors %}
   <p>Please correct the following errors:</p>
   {% for field in form %}
@@ -34,13 +40,13 @@
   {{ form.mobile }}
 
   <label>{{ form.email.label }}<span class="text-muted small">
-      (Required)</span></label>
+    (Required)</span></label>
   {{ form.email }}
 
   <label>{{ form.password.label}}<span class="text-muted mb-4">
     </span></label>
   <small class="form-text text-muted mb-4 small">
-    At least 8 characters and 1 digit
+    (Required) At least 8 characters
   </small>
   {{ form.password }}
   

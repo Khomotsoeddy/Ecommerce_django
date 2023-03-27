@@ -36,12 +36,17 @@ def payment_confirmation(data):
 
 
 def user_orders(request):
-    user_id = request.user.id
-    orders = Order.objects.filter(user_id=user_id).filter(billing_status=True)
+    orders = Order.objects.all()
 
     print(orders)
     return orders
+    
 
+def admin_orders(request):
+    orders = Order.objects.all()
+
+    print(orders)
+    return render(request, "admin/orders.html", {"orders": orders})
 
 class OrdersListView(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
