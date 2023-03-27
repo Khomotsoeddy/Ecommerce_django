@@ -29,7 +29,14 @@
       <div class="d-flex bd-highlight">
         <div class="p-2 flex-grow-1 bd-highlight">Total:</div>
         <div class="p-2 bd-highlight"><span class="fw-bold h5">R</span><span id="total"
-            class="fw-bold h5">{{basket.get_total_price}}</span></div>
+            class="fw-bold h5">{{basket.get_total_price}}</span>
+        </div>
+      </div>
+      <div class="d-flex bd-highlight">
+        <div class="p-2 flex-grow-1 bd-highlight">Total in Dollar:</div>
+        <div class="p-2 bd-highlight"><span class="fw-bold h5">$</span><span id="total"
+            class="fw-bold h5">{{payable_amount}}</span>
+        </div>
       </div>
     </div>
     
@@ -81,7 +88,7 @@
         purchase_units: [{
           "amount": {
             "currency_code": "USD",
-            "value": '{{basket.get_total_price}}'
+            "value": '{{payable_amount}}'
           }
         }]
       });

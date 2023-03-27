@@ -1,4 +1,7 @@
 import json
+import numbers
+
+import requests
 from account.models import Address
 from basket.basket import Basket
 from django.contrib import messages
@@ -72,9 +75,21 @@ def payment_selection(request):
         messages.success(request, "Please select address option")
         return HttpResponseRedirect(request.META["HTTP_REFERER"])
     
+    basket = Basket(request)
+    print('--------------->',basket.get_total_price())
+
+    url = 'https://api.exchangerate.host/convert'
+
+    response = requests.get(url, params={'from':'ZAR', 'to':'USD', 'amount': basket.get_total_price()})
+
+    data = response.json()
+
+    payable_amount = round((data["result"]),2)
+
+
     shop = 'Shoprite'
     
-    return render(request, "checkout/payment_selection.html", {'shop':shop})
+    return render(request, "checkout/payment_selection.html", {'shop':shop, 'payable_amount':payable_amount})
 
 
 ####

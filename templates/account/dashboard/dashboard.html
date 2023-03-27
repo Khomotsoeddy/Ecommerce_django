@@ -7,22 +7,22 @@
   {% if request.user.is_superuser %}
   <div class="row">
     <div class="col-md-4">
-        <div class="main-box mb-red">
-          <h5>Total number of customers: <br>{{cust_total}}</h5>
+        <div class="main-box mb-red" style='background-color:#d36f2e;'>
+          <h5>Total number of <br> customers: <br>{{cust_total}}</h5>
         </div>
     </div>
     <div class="col-md-4">
-      <div class="main-box mb-dull">
+      <div class="main-box mb-dull" style="background-color:#8F8F2C;">
         <h5>Total number of <br>Orders:<br> {{ord_cont}}</h5>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="main-box mb-pink">
-        <h5>Total number of Products:<br> {{prop_cont}}</h5>
+      <div class="main-box mb-pink" style='background-color:#FF2F71;'>
+        <h5>Total number of <br>Products:<br> {{prop_cont}}</h5>
       </div>
     </div>
     <div class="col-md-4 center">
-      <div class="main-box mb-pink">
+      <div class="main-box mb-pink" style='background-color:#FF2F71;'>
         <h5>Total number of <br>Queries: <br>{{quer_cont}}</h5>
       </div>
     </div>

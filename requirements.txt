@@ -37,4 +37,4 @@ dj-database-url
 gunicorn
 django-phonenumber-field[phonenumbers]
 bs4
-pandas
+pandasdea
