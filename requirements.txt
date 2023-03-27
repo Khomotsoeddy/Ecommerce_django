@@ -33,8 +33,7 @@ Serializers
 djangorestframework
 psycopg2
 dj-database-url
-dj-database-url
 gunicorn
 django-phonenumber-field[phonenumbers]
 bs4
-pandasdea
+pandas
