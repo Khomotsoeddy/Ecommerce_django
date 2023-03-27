@@ -1,5 +1,7 @@
 {% extends "../sub_base.html" %}
 {% block title %}Dashboard{% endblock %}
+{% load static %}
+{% block stylesheet %}{% static './account/css/custom.css' %}{% endblock %}
 
 {% block sub_content %}
 
@@ -7,22 +9,22 @@
   {% if request.user.is_superuser %}
   <div class="row">
     <div class="col-md-4">
-        <div class="main-box mb-red" style='background-color:#d36f2e;'>
+        <div class="main-box mb-red">
           <h5>Total number of <br> customers: <br>{{cust_total}}</h5>
         </div>
     </div>
     <div class="col-md-4">
-      <div class="main-box mb-dull" style="background-color:#8F8F2C;">
+      <div class="main-box mb-dull">
         <h5>Total number of <br>Orders:<br> {{ord_cont}}</h5>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="main-box mb-pink" style='background-color:#FF2F71;'>
+      <div class="main-box mb-pink" >
         <h5>Total number of <br>Products:<br> {{prop_cont}}</h5>
       </div>
     </div>
     <div class="col-md-4 center">
-      <div class="main-box mb-pink" style='background-color:#FF2F71;'>
+      <div class="main-box mb-pink">
         <h5>Total number of <br>Queries: <br>{{quer_cont}}</h5>
       </div>
     </div>
