@@ -37,11 +37,4 @@ dj-database-url
 gunicorn
 django-phonenumber-field[phonenumbers]
 bs4
-<<<<<<< HEAD
 pandas
-
-gunicorn
-django-phonenumber-field[phonenumbers]
-=======
-pandas
->>>>>>> 3ec1428 (fix bugs)
