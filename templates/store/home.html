@@ -2,7 +2,11 @@
 {% block title %} Online Shopping Home Page {% endblock %}
 
 {% block content %}
+  <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
 
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	
+	<link rel="stylesheet" href="css/style.css">
  <!-- banner bg main start -->
 <div style="position: relative;text-align: center;color: white;padding: 0">
   <img style="width:100%" src="media\images\pic.png" >
@@ -13,7 +17,8 @@
          <div class="col-sm-12">
            <h1 class="banner_taital">Welcome to MegaShop <br>Take as many as you can !!!</h1>
             <div class="buynow_bt">
-              <a href="{% url "store:store_home" %}">Shop Now</a>
+              <a href="{% url "store:store_home" %}">Shop Now</a><br>
+              <a href="account/inquiry.html"> Send inquiry</a>
             </div>
           </div>
         </div>
@@ -21,6 +26,12 @@
     </div>
   </div>
 </div>
+
+<script src="js/jquery.min.js"></script>
+  <script src="js/popper.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.validate.min.js"></script>
+  <script src="js/main.js"></script>
 
 <script src="js/jquery.min.js"></script>
 <script src="js/popper.min.js"></script>

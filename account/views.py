@@ -174,9 +174,24 @@ def account_activate(request, uidb64, token):
     else:
         return render(request, "account/registration/activation_invalid.html")
 
+@login_required
+def get_customers(request):
+    if request.method == "POST":
+        deta =  request.POST['search_data']
+        print("---------->",deta)
+        customers = Customer.objects.filter(name__contains=deta).filter(is_staff=False)
+        return render(request, "admin/customers.html",{"customers":customers} )
+
+    customers = Customer.objects.filter(is_staff=False)
+    return render(request, "admin/customers.html",{"customers":customers} )
+
+@login_required
+def customer_detail(request, id):
+    
+    customer = get_object_or_404(Customer.objects.all().filter(id=id))
+    return render(request, "admin/customer-detail.html",{"customer":customer} )
 
 # Addresses
-
 
 @login_required
 def view_address(request):
@@ -214,7 +229,7 @@ def edit_details(request):
             if not match:
                 messages.error(request, 'Incorrect number format, record is not updated!!')
             else:
-                if Customer.objects.filter(mobile = user.mobile).exists():
+                if Customer.objects.filter(mobile = mobile).exists():
                     messages.error(request, 'Mobile already exists')
                 else:
                     user.mobile = mobile

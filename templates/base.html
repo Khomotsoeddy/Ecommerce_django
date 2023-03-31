@@ -126,7 +126,7 @@
                           {% if user.is_authenticated %}
                               {% if request.user.is_superuser %}
                               <a href="{% url "account:dashboard" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link"><i class="fa-sharp fa-solid fa-chart-line"></i> Dashboard</a>
-                                  <a href='#' class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link"><i class='fa fa-user' aria-hidden='true'></i> Customers</a>
+                                  <a href="{% url "account:get_customers"%}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link"><i class='fa fa-user' aria-hidden='true'></i> Customers</a>
                                   <a href="{% url "orders:orders" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link"><i class='fa fa-bars' aria-hidden='true'></i> Orders</a>
                                   <a href='#' class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link"><i class='fa fa-question-circle' aria-hidden='true'></i> Customers</a>
                                   <a href="{% url "account:logout" %}" class="text-reset small list-group-item p-0 pb-1 border-0 dropdown-account-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>      

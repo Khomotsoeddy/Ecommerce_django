@@ -4,6 +4,7 @@ from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
 from django.core.mail import send_mail
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 
@@ -70,6 +71,9 @@ class Customer(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.name
+    
+    def get_absolute_url(self):
+        return reverse("account:customer_detail", args=[self.id])
 
 class Address(models.Model):
     """

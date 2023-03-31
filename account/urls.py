@@ -72,5 +72,7 @@ urlpatterns = [
     # Wish List
     path("wishlist", views.wishlist, name="wishlist"),
     path("wishlist/add_to_wishlist/<int:id>", views.add_to_wishlist, name="user_wishlist"),
-    path('data/',include(router.urls))
+    path('data/',include(router.urls)),
+    path("get_customers/",views.get_customers, name="get_customers"),
+    path("<slug:id>", views.customer_detail, name="customer_detail")
 ]
