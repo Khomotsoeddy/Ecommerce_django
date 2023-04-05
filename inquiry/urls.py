@@ -10,6 +10,6 @@ router = routers.DefaultRouter()
 router.register(r'inquiries', views.InquiryListView, basename='inquiries')
 
 urlpatterns = [
-    path('inquiry', views.add_inquiry, name='inquiry'),
+    path('add_inquiry/', views.add_inquiry, name='add_inquiry'),
     path('data/',include(router.urls))
 ]

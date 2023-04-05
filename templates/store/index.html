@@ -105,6 +105,33 @@
         <div class="col-12">There are currently no products active</div>
         {% else %}
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3">
+          {% if isSearch%}
+
+          {% comment %} {% for product in products %} {% endcomment %}
+
+          <div class="col">
+            <div class="card border-0">
+              {% comment %} {% for image in product.product_image.all %}
+              {% if image.is_feature%} {% endcomment %}
+              
+              <a href="{{ products.get_absolute_url }}"><img class="img-fluid" alt="" src="{{ products.product_image }}"
+                alt=""></a>
+              {% comment %} {% endif %}
+              {% endfor %} {% endcomment %}
+              <div class="card-body px-0">
+                <p class="card-text">
+                  <a class="text-dark text-decoration-none"
+                    
+                    href="{{ products.get_absolute_url }}">{{ products.product_name|slice:":50" }}...</a>
+                </p>
+                <div class="fw-bold">R{{products.price}}</div>
+                <p class="card-text">{{products.shop_retail}}</p>
+              </div>
+            </div>
+          </div>
+          {% comment %} {% endfor %} {% endcomment %}
+
+          {% else %}
           {% for product in products %}
           <div class="col">
             <div class="card border-0">
@@ -116,6 +143,7 @@
               {% comment %} {% endif %}
               {% endfor %} {% endcomment %}
               <div class="card-body px-0">
+                <p class="text-dark">From {{product.shop_retail}}</p>
                 <p class="card-text">
                   <a class="text-dark text-decoration-none"
                     
@@ -126,6 +154,7 @@
             </div>
           </div>
           {% endfor %}
+          {% endif %}
         </div>
         {% endif %}
       </div>

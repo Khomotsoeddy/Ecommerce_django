@@ -37,3 +37,5 @@ gunicorn
 django-phonenumber-field[phonenumbers]
 bs4
 pandas
+selenium
+webdriver-manager

@@ -1,3 +1,8 @@
+{% extends "../base.html" %}
+{% load static %}
+{% block title %}Admin order{%endblock %}
+{% block content %}
+
 <section class="ftco-section">
     <div class="container">
       <div class="row justify-content-center">
@@ -8,7 +13,7 @@
                 <div class="contact-wrap w-100 p-md-5 p-4">
                   <h3 class="mb-4">Get in touch</h3>
                   <div id="form-message-warning" class="mb-4"></div> 
-                  <form method="POST" id="contactForm" action="{% url "inquiry:inquiry"%}">
+                  <form method="POST" id="contactForm" action="{% url "inquiry:add_inquiry"%}">
                     {% csrf_token %}
                     <div class="row">
                       <div class="col-md-6">
@@ -40,6 +45,7 @@
                         <div class="form-group">
                           <input type="submit" value="Send Message" class="btn btn-primary">
                           <div class="submitting"></div>
+                          <a style={" text-decoration: none;"} href="{% url "store:store_home"%}"> <i class="fa-solid fa-backward"></i> Back</a>
                         </div>
                       </div>
                     </div>
@@ -52,3 +58,4 @@
       </div>
     </div>
   </section>
+  {% endblock %}

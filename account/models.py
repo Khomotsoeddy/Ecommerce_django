@@ -41,6 +41,8 @@ class CustomAccountManager(BaseUserManager):
 class Customer(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     name = models.CharField(max_length=150)
+    surname = models.CharField(max_length=150)
+    second_surname =models.CharField(blank=True,null= True,max_length=150)
     mobile = PhoneNumberField(unique = True)
     id_number = models.CharField(max_length=13, blank=False,unique=True)
     date_of_birth = models.DateField(null=True, blank=True)

@@ -100,59 +100,57 @@ def account_register(request):
 
                 age = current_year - year
 
-                gender_digit = int(user_id[6])
-                gender = 'Male' if gender_digit >= 5 else 'Female'
+                if age >= 18 :
 
-                user.age_number = age
-                user.gender = gender
-                birthdate= date(year,month,day)
-                user.date_of_birth = birthdate
-                user.is_active = False
-                user.save()
-                # try:
+                    gender_digit = int(user_id[6])
+                    gender = 'Male' if gender_digit >= 5 else 'Female'
+
+                    user.age_number = age
+                    user.gender = gender
+                    birthdate= date(year,month,day)
+                    user.date_of_birth = birthdate
+                    user.is_active = False
+                    user.save()
+
+                    current_site = get_current_site(request)
+                    subject = "Activate your Account"
+                    message = render_to_string(
+                        "account/registration/account_activation_email.html",
+                        {
+                            "user": user,
+                            "domain": current_site.domain,
+                            "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                            "token": account_activation_token.make_token(user),
+                        },
+                    )
                     
-        
+                    me = 'powerwm111@gmail.com'
+                    you = user.email
+                    password = 'kddxamltpmiawtra'
+                    email_body = "<html><boby>"+"Hi "+user.name+"<br><br>Your account has successfully created. Please click below link to activate your account<br><br>"+'http://'+current_site.domain+'/account/activate/'+urlsafe_base64_encode(force_bytes(user.pk))+'/'+account_activation_token.make_token(user)+"<br><br>Regards<br>Mega Team"+"</body></html>"
+                    email_message = MIMEMultipart('alternative',None,[MIMEText(email_body, 'html')])
 
-                current_site = get_current_site(request)
-                subject = "Activate your Account"
-                message = render_to_string(
-                    "account/registration/account_activation_email.html",
-                    {
-                        "user": user,
-                        "domain": current_site.domain,
-                        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                        "token": account_activation_token.make_token(user),
-                    },
-                )
-                
-                me = 'powerwm111@gmail.com'
-                you = user.email
-                password = 'kddxamltpmiawtra'
-                email_body = "<html><boby>"+"Hi "+user.name+"\n\nYour account has successfully created. Please click below link to activate your account\n\n\n"+'http://'+current_site.domain+'/account/activate/'+urlsafe_base64_encode(force_bytes(user.pk))+'/'+account_activation_token.make_token(user)+"\n\nRegards\nMega Team"+"</body></html>"
-                email_message = MIMEMultipart('alternative',None,[MIMEText(email_body, 'html')])
+                    email_message['subject'] = subject
+                    email_message['from'] = me
+                    email_message['to'] = user.email
 
-                email_message['subject'] = subject
-                email_message['from'] = me
-                email_message['to'] = user.email
+                    try:
+                        server = smtplib.SMTP('smtp.gmail.com:587')
+                        server.ehlo()
+                        server.starttls()
+                        server.login(me,password)
+                        server.sendmail(me,you,email_message.as_string())
+                        print(email_message.as_string())
+                        server.quit()
+                    except Exception as e:
+                        print(f'error in sending email: {e}')
 
-                try:
-                    server = smtplib.SMTP('smtp.gmail.com:587')
-                    server.ehlo()
-                    server.starttls()
-                    server.login(me,password)
-                    server.sendmail(me,you,email_message.as_string())
-                    server.quit()
-                except Exception as e:
-                    print(f'error in sending email: {e}')
-
-                user.email_user(subject=subject, message=message)
-                return render(request, "account/registration/register_email_confirm.html", {"form": registerForm})
+                    user.email_user(subject=subject, message=message)
+                    return render(request, "account/registration/register_email_confirm.html", {"form": registerForm})
+                else:
+                    messages.error(request, 'Person under the age of 18 are not allowed to register')
+                # try:
         except Exception as e:
-            # messages.add_message(request, messages.ERROR, e)
-            # if on_error == 'error':
-            # raise
-            # logger.error('Failed to upload to ftp: '+ str(e),exc_info=True)
-            # print('invalid ID: ',e)
             messages.error(request, 'Invalid ID number')
     else:
         registerForm = RegistrationForm()
@@ -187,7 +185,7 @@ def get_customers(request):
 
 @login_required
 def customer_detail(request, id):
-    
+
     customer = get_object_or_404(Customer.objects.all().filter(id=id))
     return render(request, "admin/customer-detail.html",{"customer":customer} )
 

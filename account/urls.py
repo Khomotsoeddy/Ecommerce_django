@@ -70,9 +70,9 @@ urlpatterns = [
     path("user_orders/", views.user_orders, name="user_orders"),
     path("order_detail", views.order_detail, name='order_detail'),
     # Wish List
-    path("wishlist", views.wishlist, name="wishlist"),
+    path("wishlist/", views.wishlist, name="wishlist"),
     path("wishlist/add_to_wishlist/<int:id>", views.add_to_wishlist, name="user_wishlist"),
     path('data/',include(router.urls)),
-    path("get_customers/",views.get_customers, name="get_customers"),
+    path("all/get_customers/",views.get_customers, name="get_customers"),
     path("<slug:id>", views.customer_detail, name="customer_detail")
 ]

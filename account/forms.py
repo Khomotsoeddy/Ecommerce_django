@@ -62,6 +62,10 @@ class RegistrationForm(forms.ModelForm):
     #     label='Enter Username', min_length=4, max_length=50, help_text='Required')
     name = forms.CharField(
         label='Enter name', min_length=4, max_length=50, help_text='Required')
+    surname = forms.CharField(
+        label='Enter surname', min_length=4, max_length=50, help_text='Required')
+    second_surname = forms.CharField(
+        label='Enter median name', min_length=0, max_length=50, help_text='Optional')
     mobile = forms.CharField(
         label='Phone number', min_length=4, max_length=50, help_text='Required')
     id_number = forms.CharField(
@@ -74,7 +78,7 @@ class RegistrationForm(forms.ModelForm):
 
     class Meta:
         model = Customer
-        fields = ('name','mobile', 'email','id_number')
+        fields = ('name','mobile', 'email','id_number','second_surname','surname')
     
     def clean_id_number(self):
         id_number = self.cleaned_data['id_number']
@@ -114,6 +118,10 @@ class RegistrationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['name'].widget.attrs.update(
             {'class': 'form-control mb-3', 'placeholder': 'Name'})
+        self.fields['surname'].widget.attrs.update(
+            {'class': 'form-control mb-3', 'placeholder': 'Surname'})
+        self.fields['second_surname'].widget.attrs.update(
+            {'class': 'form-control mb-3', 'placeholder': 'Median Name'})
         self.fields['mobile'].widget.attrs.update(
             {'class': 'form-control mb-3', 'placeholder': 'Mobile (+27711110000)'})
         self.fields['id_number'].widget.attrs.update(
