@@ -1,12 +1,36 @@
 {% extends "../sub_base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% load static %}
-{% block stylesheet %}{% static './account/css/custom.css' %}{% endblock %}
+{% comment %} {% block stylesheet %}{% static './account/css/custom.css' %}{% endblock %} {% endcomment %}
 
 {% block sub_content %}
 
 {% if user.is_authenticated %}
   {% if request.user.is_superuser %}
+  <style>
+    .main-box {
+      text-align:center;
+      padding:20px;
+      border-radius:5px;
+      -moz-border-radius:5px ;
+      -webkit-border-radius:5px;
+      margin-bottom:40px;
+  }
+  .mb-dull {
+    background-color:#8F8F2C;
+  }
+  .mb-red {
+      background-color:#d36f2e;
+  }
+  .mb-pink {
+      background-color:#FF2F71;
+  }
+  .main-box h5 {
+    font-size:16px;
+    font-weight:800;
+    text-transform:uppercase;
+}
+  </style>
   <div class="row">
     <div class="col-md-4">
         <div class="main-box mb-red">
