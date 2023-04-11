@@ -1,7 +1,9 @@
 from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.decorators import login_required
 import requests
 from bs4 import BeautifulSoup #For web scraping
 import pandas as pd
+from django.contrib import messages
 
 from .models import Product
 import random
@@ -14,14 +16,20 @@ def product_all(request):
     if request.method == "POST":
         deta =  request.POST['search_data']
         print(deta)
-        products = Product.objects.filter(product_name__contains=deta).order_by('price')
-        products = products[0]
-        print(products)
-        return render(request, "store/index.html", {"products": products, 'isSearch': True})
+        if Product.objects.filter(product_name__contains=deta).exists():
+            products = Product.objects.filter(product_name__contains=deta).order_by('price')
+            products = products[0]
+            print(products)
+            return render(request, "store/index.html", {"products": products, 'isSearch': True})
+        else:
+            messages.info(request, "Product not found, please check your spelling")
+            products = Product.objects.all()
+            return render(request, "store/index.html", {"products": products})
 
     products = Product.objects.all()
     return render(request, "store/index.html", {"products": products})
 
+@login_required
 def get_data(request):
     user_agents_list = [
         'Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
@@ -34,7 +42,7 @@ def get_data(request):
     for i in range(0,30):
         print(i)
         url_shoprite = f'https://www.shoprite.co.za/c-2256/All-Departments?q=%3Arelevance%3AbrowseAllStoresFacetOff%3AbrowseAllStoresFacetOff&page={i}'
-        url_checkers = f'https://www.checkers.co.za/c-2256/All-Departments?q=%3Arelevance%3AbrowseAllStoresFacetOff%3AbrowseAllStoresFacetOff&page={i+1}'
+        url_checkers = f'https://www.checkers.co.za/c-2256/All-Departments?q=%3Arelevance%3AbrowseAllStoresFacetOff%3AbrowseAllStoresFacetOff&page={i+7}'
         # url_woolworths = f'https://www.woolworths.co.za/cat/Food/_/N-1z13sk5?No={i}&Ntt=groceries&Nrpp=60&inv=0'
         checkers_page = requests.get(url=url_checkers)
         shoprite_page = requests.get(url=url_shoprite)

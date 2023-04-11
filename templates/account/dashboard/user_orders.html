@@ -8,7 +8,21 @@
 </div>
 <div class="col-12 d-flex justify-content-between">
   <div>Manage your <b>orders</b></div>
+  <div class="d-flex flex-row-reverse bd-highlight">
+    <div class="p-2 bd-highlight">
+      Sort By:
+      <form name="orderSort" method='post' action="{% url 'account:user_orders' %}" >
+        {% csrf_token %}
+        <select onChange='orderSort.submit();' size=1 id="nav_combo" name="sort">
+          <option value="default"></option>
+          <option value="Decending">Date: Decending</option>
+          <option value="Ascending">Date: Ascending</option>
+        </select>
+      </form>
+    </div>
+  </div>
 </div>
+
 <hr />
   <div class="container">
     {% for order in orders %}
@@ -73,6 +87,5 @@
     <hr />
     {% endfor %}
   </div>
-
 
 {% endblock %}

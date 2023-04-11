@@ -1,8 +1,11 @@
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 import json
 import numbers
+import smtplib
 
 import requests
-from account.models import Address
+from account.models import Address, Customer
 from basket.basket import Basket
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -107,6 +110,7 @@ def payment_complete(request):
     data = body["orderID"]
     user_id = request.user.id
 
+    customer = Customer.objects.get(id= user_id)
     # print(data,'',user_id)
     requestorder = OrdersGetRequest(data)
     # print(requestorder)
@@ -114,20 +118,55 @@ def payment_complete(request):
 
     total_paid = response.result.purchase_units[0].amount.value
     basket = Basket(request)
+    url = 'https://api.exchangerate.host/convert'
+
+    zarAmount = requests.get(url, params={'from':'USD', 'to':'ZAR', 'amount': response.result.purchase_units[0].amount.value})
+
+    data = zarAmount.json()
+
+    payable_amount = round((data["result"]),2)
 
     order = Order.objects.create(
         user_id=user_id,
-        full_name=response.result.purchase_units[0].shipping.name.full_name,
-        email=response.result.payer.email_address,
+        # full_name=response.result.purchase_units[0].shipping.name.full_name,
+        # email=response.result.payer.email_address,
+        # address1=response.result.purchase_units[0].shipping.address.address_line_1,
+        # address2=response.result.purchase_units[0].shipping.address.admin_area_2,
+        full_name= customer.name +' '+customer.surname,
+        email=customer.email,
         address1=response.result.purchase_units[0].shipping.address.address_line_1,
-        address2=response.result.purchase_units[0].shipping.address.admin_area_2,
+        city=response.result.purchase_units[0].shipping.address.admin_area_2,
         postal_code=response.result.purchase_units[0].shipping.address.postal_code,
         country_code=response.result.purchase_units[0].shipping.address.country_code,
-        total_paid=response.result.purchase_units[0].amount.value,
+        total_paid=payable_amount,
         order_key=response.result.id,
         payment_option="paypal",
         billing_status=True,
+        phone = customer.mobile,
     )
+
+    me = 'powerwm111@gmail.com'
+    you = customer.email
+    subjectE = "Order Confirmation"
+    password = 'kddxamltpmiawtra'
+    email_body = "<html><boby>"+"Hi "+customer.name+"<br><br>Your order has successfully received.<br><br><br>Regards<br>Mega Team"+"</body></html>"
+    email_message = MIMEMultipart('alternative',None,[MIMEText(email_body, 'html')])
+
+    email_message['subject'] = subjectE
+    email_message['from'] = me
+    email_message['to'] = customer.email
+
+    try:
+        server = smtplib.SMTP('smtp.gmail.com:587')
+        server.ehlo()
+        server.starttls()
+        server.login(me,password)
+        server.sendmail(me,you,email_message.as_string())
+        print(email_message.as_string())
+        server.quit()
+    except Exception as e:
+        print(f'error in sending email: {e}')
+        
     print(order)
     order_id = order.pk
 

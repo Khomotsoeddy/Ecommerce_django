@@ -11,5 +11,7 @@ router.register(r'inquiries', views.InquiryListView, basename='inquiries')
 
 urlpatterns = [
     path('add_inquiry/', views.add_inquiry, name='add_inquiry'),
-    path('data/',include(router.urls))
+    path('data/',include(router.urls)),
+    path("inqueries/", views.inqueries, name="inqueries"),
+    path("delete/", views.delete, name="delete")
 ]

@@ -65,6 +65,7 @@ class RegistrationForm(forms.ModelForm):
     surname = forms.CharField(
         label='Enter surname', min_length=4, max_length=50, help_text='Required')
     second_surname = forms.CharField(
+        required=False,
         label='Enter median name', min_length=0, max_length=50, help_text='Optional')
     mobile = forms.CharField(
         label='Phone number', min_length=4, max_length=50, help_text='Required')

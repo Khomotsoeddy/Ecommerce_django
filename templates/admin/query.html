@@ -3,18 +3,104 @@
 {% block title %}Admin order{%endblock %}
 {% block content %}
 
+<style>
+  
+    * {
+      box-sizing: border-box;
+    }
+    
+    .products {
+      height: 50%;
+      max-width: auto;
+      align-items: baseline;
+      display: flex;
+      flex-wrap: wrap;
+      padding: auto;
+    }
+    .card {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        max-width: 300px;
+        margin: auto;
+        text-align: center;
+        font-family: arial;
+        flex: 33.33%;
+        padding: 5px;
+      }
+      
+      .price {
+        color: grey;
+        font-size: 22px;
+      }
+      
+      .card button {
+        border: none;
+        outline: 0;
+        padding: 12px;
+        color: white;
+        background-color: #000;
+        text-align: center;
+        cursor: pointer;
+        width: 100%;
+        font-size: 18px;
+      }
+      
+      .card button:hover {
+        opacity: 0.7;
+      }
+  
+      form.example input[type=text] {
+        padding: 10px;
+        font-size: 17px;
+        border: 1px solid grey;
+        float: left;
+        width: 80%;
+        background: #f1f1f1;
+      }
+  
+        form.example button {
+        float: left;
+        width: 20%;
+        padding: 10px;
+        background: #2196F3;
+        color: white;
+        font-size: 17px;
+        border: 1px solid grey;
+        border-left: none;
+        cursor: pointer;
+      }
+  
+      form.example button:hover {
+        background: #0b7dda;
+      }
+  
+      form.example::after {
+        content: "";
+        clear: both;
+        display: table;
+      }
+      {% comment %} form{
+        width: 50%;
+      } {% endcomment %}
+  </style>
 
 <div class="container">
-  {% if not orders%}
-        <div class="col-12">There are currently no orders</div>
-        {% else %}
+  {% comment %} <form method="post" class="example" action="{% url "account:get_customers"%}">
+    {% csrf_token %}
+    <input type="text" placeholder="Search by name..." name="search_data">
+    <button type="submit"><i class="fa fa-search"></i></button>
+</form> {% endcomment %}
     <div class="table-wrap">
+       
+        <br>
+        {% if not inqueries%}
+        <div class="col-12">There are currently no inquiry</div>
+        {% else %}
         <table class="sortable">
           <thead>
             <tr>
                 <th>
                     <button>
-                        Order ID
+                        ID
                         <span aria-hidden="true"></span>
                     </button>
                 </th>
@@ -32,48 +118,96 @@
                 </th>
                 <th>
                     <button>
-                    Order Date
+                    Mobile
                     <span aria-hidden="true"></span>
+                    </button>
+                </th>
+                
+                <th>
+                    <button>
+                        Subject
+                        <span aria-hidden="true"></span>
                     </button>
                 </th>
                 <th class="no-sort">
-                    Address
+                    Message
                 </th>
-                <th class="num">
+                <th>
                     <button>
-                    Total Paid
-                    <span aria-hidden="true"></span>
+                        Created on
+                        <span aria-hidden="true"></span>
                     </button>
+                </th>
+                <th class="no-sort">
+                    Action
                 </th>
             </tr>
           </thead>
           <tbody>
-            {% for order in orders%}
+            {% for inquiry in inqueries%}
+            
             <tr>
+                
                 <td>
-                  {{order.id}}
+                    {{inquiry.id}}
                 </td>
-              <td>
-                {{order.full_name}}
-              </td>
-              <td>
-                {{order.email}}
-              </td>
-              <td>
-                {{order.created}}
-              </td>
-              <td>
-                {{order.address1}}, {{order.address2}}, {{order.postal_code}}, {{order.country_code}}
-              </td>
-              <td class="num">
-                {{order.total_paid}}
-              </td>
+                <td>
+                    {{inquiry.name}}
+                </td>
+                <td>
+                    {{inquiry.email}}
+                </td>
+                <td>
+                    {{inquiry.mobile}}
+                </td>
+                
+                <td>
+                    {{inquiry.subject}}
+                </td>
+                <td>
+                    {{inquiry.message}}
+                </td>
+                <td>
+                    {{inquiry.created}}
+                </td>
+                <td>
+                    <a type="button" id="delete-button" data-index="{{inquiry.id}}"
+                    class="delete-button text-decoration-none small" onClick="window.location.reload();">Delete</a>
+                </td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
+        {% endif %}
+        <hr/>
+       
       </div>
-{% endif %}
+      {% comment %} <div class="d-flex justify-content-center">
+        <button id="printButton" onclick="print()" type="button" class="btn btn-success">
+          Download as PDF
+        </button>
+      </div> {% endcomment %}
+      <script>
+        $(document).on("click", "#delete-button", function (e) {
+            e.preventDefault();
+            var inquireid = $(this).data("index");
+            $.ajax({
+                type: "POST",
+                url: '{% url "inquiry:delete" %}',
+                data: {
+                    inquiryid: $(this).data("index"),
+                    csrfmiddlewaretoken: "{{csrf_token}}",
+                    action: "post",
+                },
+                success: function (json) {
+                    $('.inquiry[data-index="' + inquireid + '"]').remove();
+                },
+                error: function (xhr, errmsg, err) {},
+            });
+        });
+      </script>
+
+
     <script>
         /*
  *   This content is licensed according to the W3C Software License at
@@ -243,6 +377,26 @@ window.addEventListener('load', function () {
   }
 });
     </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js "></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+  window.jsPDF = window.jspdf.jsPDF;
+var docPDF = new jsPDF();
+function print(){
+var elementHTML = document.querySelector(".table-wrap");
+docPDF.html(elementHTML, {
+ callback: function(docPDF) {
+  docPDF.save('customerList.pdf');
+ },
+ x: 5,
+ y: 5,
+ width: 200,
+ windowWidth: 600
+});
+}
+</script>
 </div>
 
 {% endblock %}

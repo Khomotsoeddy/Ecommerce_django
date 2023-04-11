@@ -29,6 +29,7 @@ import string
 from .forms import RegistrationForm, UserAddressForm, UserEditForm
 from .models import Address, Customer
 from .tokens import account_activation_token
+from fpdf import FPDF
 
 
 @login_required
@@ -172,6 +173,18 @@ def account_activate(request, uidb64, token):
     else:
         return render(request, "account/registration/activation_invalid.html")
 
+def DownloadSammary(request):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size = 15)
+
+    pdf.cell(200, 10, txt = "GeeksforGeeks",
+         ln = 1, align = 'C')
+    
+    pdf.cell(200, 10, txt = "A Computer Science portal for geeks.",
+         ln = 2, align = 'C')
+    pdf.output("order.pdf")
+
 @login_required
 def get_customers(request):
     if request.method == "POST":
@@ -280,7 +293,24 @@ def set_default(request, id):
 
 @login_required
 def user_orders(request):
+
     user_id = request.user.id
+
+    if request.method == "POST":
+        deta =  request.POST['sort']
+
+        print("sorting========>",deta)
+        if deta == 'Decending':
+            orders = Order.objects.filter(user_id=user_id).filter(billing_status=True).order_by('-created')
+            return render(request, "account/dashboard/user_orders.html", {"orders": orders})
+        elif deta == "Ascending":
+            orders = Order.objects.filter(user_id=user_id).filter(billing_status=True).order_by('created')
+            return render(request, "account/dashboard/user_orders.html", {"orders": orders})
+        else:
+            orders = Order.objects.filter(user_id=user_id).filter(billing_status=True)
+            print(orders)
+            return render(request, "account/dashboard/user_orders.html", {"orders": orders})
+
     orders = Order.objects.filter(user_id=user_id).filter(billing_status=True)
     print(orders)
     return render(request, "account/dashboard/user_orders.html", {"orders": orders})
