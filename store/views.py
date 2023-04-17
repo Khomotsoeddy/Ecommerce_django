@@ -11,6 +11,31 @@ import random
 def home(request):
     return render(request, 'store/home.html')
 
+def sorting_product(request):
+    if request.method == "POST":
+        sortProduct = request.POST['sort1']
+        print(sortProduct)
+
+        if sortProduct == 'Shoprite':
+            products = Product.objects.all().filter(shop_retail = 'Shoprite')
+            return render(request, "store/index.html", {"products": products})
+        elif sortProduct == 'Checkers':
+            products = Product.objects.all().filter(shop_retail = 'Checkers')
+            return render(request, "store/index.html", {"products": products})
+        elif sortProduct == 'Shoprite_first':
+            products = Product.objects.all().order_by('-shop_retail')
+            return render(request, "store/index.html", {"products": products})
+        elif sortProduct == 'Checkers_first':
+            products = Product.objects.all().order_by('shop_retail')
+            return render(request, "store/index.html", {"products": products})
+        else:
+            products = Product.objects.all()
+            return render(request, "store/index.html", {"products": products})
+
+    products = Product.objects.all()
+    return render(request, "store/index.html", {"products": products})
+
+
 def product_all(request):
     print(request.method)
     if request.method == "POST":

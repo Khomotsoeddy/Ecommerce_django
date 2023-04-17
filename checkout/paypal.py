@@ -5,7 +5,7 @@ from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment
 
 class PayPalClient:
     def __init__(self):
-        self.client_id = "AacRQ_0o8FhW8X0sj4lAh74XBPIu10Ypr6UzTuZLggo6Mo7Q11l5WE7-xZdjB0HLFdgdXCKBpewVhvUF"
-        self.client_secret = "EB4T_Su22BAp8u-EWIaSjrVh0jaL9pbdQH51emoEbMg8tOTwQvaZziCYkXDgHfF55yPsd6570rKHclgx"
+        self.client_id = "Ae9wF2mN53z_C_rBbzOjVHKM6seYI1U3vfsGLKrvgbHEY8wo3cgvpKJFRXqKW5HLbTq8saF64u67U5bV"
+        self.client_secret = "EOos-QlR_DW_99-WS4SGoA0eyzz3id1n8xEibVeWYhktz54Sba0RLmbhcgKDnJqA-5PEBinOxoDDVNHX"
         self.environment = SandboxEnvironment(client_id=self.client_id, client_secret=self.client_secret)
         self.client = PayPalHttpClient(self.environment)

@@ -1,6 +1,10 @@
 import logging as logger
 from django.contrib import messages
 from django.contrib.auth import login, logout
+from django.db.models import Q, F
+from django.db.models import Value as V
+import re
+from django.db.models.functions import Concat
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponse, HttpResponseRedirect
@@ -85,6 +89,9 @@ def account_register(request):
                 user.set_password(registerForm.cleaned_data["password"])
                 user.mobile = registerForm.cleaned_data['mobile']
                 user.id_number = registerForm.cleaned_data['id_number']
+                user.name = registerForm.cleaned_data['name']
+                user.second_surname = registerForm.cleaned_data['second_surname']
+                user.surname = registerForm.cleaned_data['surname']
                 
                 user_id = user.id_number
 
@@ -111,7 +118,7 @@ def account_register(request):
                     birthdate= date(year,month,day)
                     user.date_of_birth = birthdate
                     user.is_active = False
-                    user.save()
+                    # user.save()
 
                     current_site = get_current_site(request)
                     subject = "Activate your Account"
@@ -152,6 +159,7 @@ def account_register(request):
                     messages.error(request, 'Person under the age of 18 are not allowed to register')
                 # try:
         except Exception as e:
+            print('---------------->',e)
             messages.error(request, 'Invalid ID number')
     else:
         registerForm = RegistrationForm()
@@ -190,7 +198,7 @@ def get_customers(request):
     if request.method == "POST":
         deta =  request.POST['search_data']
         print("---------->",deta)
-        customers = Customer.objects.filter(name__contains=deta).filter(is_staff=False)
+        customers = Customer.objects.annotate(full_name=Concat('name', V(" "), 'surname')).annotate(full_name_second=Concat('name', V(" "), 'surname', V(' '), 'second_surname')).filter(Q(full_name_second=deta)|Q(full_name=deta) | Q(name__contains=deta) | Q(surname__contains=deta) | Q(second_surname__contains=deta)).filter(is_staff=False)
         return render(request, "admin/customers.html",{"customers":customers} )
 
     customers = Customer.objects.filter(is_staff=False)
@@ -230,6 +238,7 @@ def edit_details(request):
         user = Customer.objects.get(id=request.user.id)
         
         user.name = request.POST['name']
+        user.surname = request.POST['surname']
         mobile = request.POST['mobile']
 
         if(len(mobile) != 12):
@@ -240,8 +249,11 @@ def edit_details(request):
             if not match:
                 messages.error(request, 'Incorrect number format, record is not updated!!')
             else:
-                if Customer.objects.filter(mobile = mobile).exists():
+                if Customer.objects.filter(mobile = mobile).exclude(id = user.id).exists():
                     messages.error(request, 'Mobile already exists')
+
+                    if len(re.findall(r'\d', user.surname)) > 0 | len(re.findall(r'\d', user.name)) > 0:
+                        messages.error(request, 'Invalid name or surname')
                 else:
                     user.mobile = mobile
                     user.save()

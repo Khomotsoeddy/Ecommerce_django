@@ -1,87 +1,7 @@
 {% extends "../base.html" %}
 {% load static %}
-{% block title %}Admin order{%endblock %}
+{% block title %}Queries{%endblock %}
 {% block content %}
-
-<style>
-  
-    * {
-      box-sizing: border-box;
-    }
-    
-    .products {
-      height: 50%;
-      max-width: auto;
-      align-items: baseline;
-      display: flex;
-      flex-wrap: wrap;
-      padding: auto;
-    }
-    .card {
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        max-width: 300px;
-        margin: auto;
-        text-align: center;
-        font-family: arial;
-        flex: 33.33%;
-        padding: 5px;
-      }
-      
-      .price {
-        color: grey;
-        font-size: 22px;
-      }
-      
-      .card button {
-        border: none;
-        outline: 0;
-        padding: 12px;
-        color: white;
-        background-color: #000;
-        text-align: center;
-        cursor: pointer;
-        width: 100%;
-        font-size: 18px;
-      }
-      
-      .card button:hover {
-        opacity: 0.7;
-      }
-  
-      form.example input[type=text] {
-        padding: 10px;
-        font-size: 17px;
-        border: 1px solid grey;
-        float: left;
-        width: 80%;
-        background: #f1f1f1;
-      }
-  
-        form.example button {
-        float: left;
-        width: 20%;
-        padding: 10px;
-        background: #2196F3;
-        color: white;
-        font-size: 17px;
-        border: 1px solid grey;
-        border-left: none;
-        cursor: pointer;
-      }
-  
-      form.example button:hover {
-        background: #0b7dda;
-      }
-  
-      form.example::after {
-        content: "";
-        clear: both;
-        display: table;
-      }
-      {% comment %} form{
-        width: 50%;
-      } {% endcomment %}
-  </style>
 
 <div class="container">
   {% comment %} <form method="post" class="example" action="{% url "account:get_customers"%}">
@@ -89,6 +9,10 @@
     <input type="text" placeholder="Search by name..." name="search_data">
     <button type="submit"><i class="fa fa-search"></i></button>
 </form> {% endcomment %}
+<div class="col-12">
+  <h1 class="h2">Enqueries Summary</h1>
+</div>
+<hr/>
     <div class="table-wrap">
        
         <br>

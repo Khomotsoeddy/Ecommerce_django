@@ -10,6 +10,13 @@ class UserAddressForm(forms.ModelForm):
         model = Address
         fields = ["full_name", "phone", "address_line", "address_line2", "town_city", "postcode"]
 
+    def clean_name(self):
+        full_name = self.cleaned_data['full_name']
+        counter = len(re.findall(r'\d', full_name))
+        if counter > 0:
+            raise forms.ValidationError("Incorect name")
+        return full_name
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["full_name"].widget.attrs.update(
@@ -66,7 +73,7 @@ class RegistrationForm(forms.ModelForm):
         label='Enter surname', min_length=4, max_length=50, help_text='Required')
     second_surname = forms.CharField(
         required=False,
-        label='Enter median name', min_length=0, max_length=50, help_text='Optional')
+        label='Enter maternal name', min_length=0, max_length=50, help_text='Optional')
     mobile = forms.CharField(
         label='Phone number', min_length=4, max_length=50, help_text='Required')
     id_number = forms.CharField(
@@ -80,6 +87,27 @@ class RegistrationForm(forms.ModelForm):
     class Meta:
         model = Customer
         fields = ('name','mobile', 'email','id_number','second_surname','surname')
+
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        counter = len(re.findall(r'\d', name))
+        if counter > 0:
+            raise forms.ValidationError("Incorect name")
+        return name
+    
+    def clean_surname(self):
+        surname = self.cleaned_data['surname']
+        counter = len(re.findall(r'\d', surname))
+        if counter > 0:
+            raise forms.ValidationError("Incorect surname")
+        return surname
+    
+    def clean_second_surname(self):
+        second_surname = self.cleaned_data['second_surname']
+        counter = len(re.findall(r'\d', second_surname))
+        if counter > 0:
+            raise forms.ValidationError("Incorect maternal name")
+        return second_surname
     
     def clean_id_number(self):
         id_number = self.cleaned_data['id_number']
@@ -180,6 +208,9 @@ class UserEditForm(forms.ModelForm):
     name = forms.CharField(
         label='Firstname', min_length=4, max_length=50, widget=forms.TextInput(
             attrs={'class': 'form-control mb-3', 'placeholder': 'Firstname', 'id': 'form-lastname'}))
+    surname = forms.CharField(
+        label='Firstname', min_length=4, max_length=50, widget=forms.TextInput(
+            attrs={'class': 'form-control mb-3', 'placeholder': 'Lastname', 'id': 'form-lastname'}))
     mobile = forms.CharField(
         label='Mobile', min_length=4, max_length=50, widget=forms.TextInput(
             attrs={'class': 'form-control mb-3', 'placeholder': 'Mobile (+27711110000)', 'id': 'form-lastname'}))
@@ -195,10 +226,24 @@ class UserEditForm(forms.ModelForm):
             if not match:
                 raise forms.ValidationError("Incorrect format")
         return mobile
+    
+    def clean_surname(self):
+        surname = self.cleaned_data['surname']
+        counter = len(re.findall(r'\d', surname))
+        if counter > 0:
+            raise forms.ValidationError("Incorect surname")
+        return surname
+    
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        counter = len(re.findall(r'\d', name))
+        if counter > 0:
+            raise forms.ValidationError("Incorect name")
+        return name
 
     class Meta:
         model = Customer
-        fields = ('email','name','mobile','id_number', 'date_of_birth', 'gender')
+        fields = ('email','name','mobile','id_number', 'date_of_birth', 'gender','surname')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

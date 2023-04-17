@@ -103,8 +103,26 @@
   <div class="container">
     <div class="row">
       <div class="album py-5">
+        <div class="col-12 d-flex justify-content-between">
         <div class="pb-3">
           <h1 class="h3">Popular</h1>
+        </div>
+            <div class="p-2 bd-highlight">
+              Sort By:
+              <form name="productSort" method='post' action="{% url 'store:sort_products' %}" >
+                {% csrf_token %}
+                <select onChange='productSort.submit();' size=1 id="nav_combo" name="sort1">
+                  <option value="default"></option>
+                  <option value="default_value">Default</option>
+                  <option value="Shoprite">Shoprite only</option>
+                  <option value="Checkers">Checkers only</option>
+                  <option value="Shoprite_first">Shoprite first</option>
+                  <option value="Checkers_first">Checkers first</option>
+
+                </select>
+              </form>
+            </div>
+          
         </div>
         {% if not products %}
         <div class="col-12">There are currently no products active</div>

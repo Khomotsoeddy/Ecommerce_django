@@ -41,6 +41,7 @@
     </div>
     
     {% comment %} {% if shop == 'Shoprite'%}
+    
       <script src="https://www.paypal.com/sdk/js?client-id=Ac6wrbGsPZ081J9m5-NQqt7KfHqCKz2xyYFAQV9wX66P_kv15s57jieUDh_-dhdNRUjebLI0CgczYGD3&currency=USD"></script>
     {% endif %}
 
@@ -50,7 +51,7 @@
     
     {% endcomment %}
     <script
-      src="https://www.paypal.com/sdk/js?client-id=AacRQ_0o8FhW8X0sj4lAh74XBPIu10Ypr6UzTuZLggo6Mo7Q11l5WE7-xZdjB0HLFdgdXCKBpewVhvUF&currency=USD"
+      src="https://www.paypal.com/sdk/js?client-id=Ae9wF2mN53z_C_rBbzOjVHKM6seYI1U3vfsGLKrvgbHEY8wo3cgvpKJFRXqKW5HLbTq8saF64u67U5bV&currency=USD"
       data-sdk-integration-source="button-factory">
     </script>
     <div class="col-md-7 col-lg-8 pe-0 pe-md-5">
@@ -88,7 +89,7 @@
         purchase_units: [{
           "amount": {
             "currency_code": "USD",
-            "value": '{{payable_amount}}'
+            "value": '10'
           }
         }]
       });

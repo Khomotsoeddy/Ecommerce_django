@@ -1,53 +1,9 @@
 {% extends "../base.html" %}
 {% load static %}
-{% block title %}Admin order{%endblock %}
+{% block title %}Admin Customers{%endblock %}
 {% block content %}
 
 <style>
-  
-    * {
-      box-sizing: border-box;
-    }
-    
-    .products {
-      height: 50%;
-      max-width: auto;
-      align-items: baseline;
-      display: flex;
-      flex-wrap: wrap;
-      padding: auto;
-    }
-    .card {
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        max-width: 300px;
-        margin: auto;
-        text-align: center;
-        font-family: arial;
-        flex: 33.33%;
-        padding: 5px;
-      }
-      
-      .price {
-        color: grey;
-        font-size: 22px;
-      }
-      
-      .card button {
-        border: none;
-        outline: 0;
-        padding: 12px;
-        color: white;
-        background-color: #000;
-        text-align: center;
-        cursor: pointer;
-        width: 100%;
-        font-size: 18px;
-      }
-      
-      .card button:hover {
-        opacity: 0.7;
-      }
-  
       form.example input[type=text] {
         padding: 10px;
         font-size: 17px;
@@ -78,12 +34,14 @@
         clear: both;
         display: table;
       }
-      {% comment %} form{
-        width: 50%;
-      } {% endcomment %}
   </style>
 
 <div class="container">
+
+  <div class="col-12">
+    <h1 class="h2">Customer Summary</h1>
+  </div>
+  <hr/>
   <form method="post" class="example" action="{% url "account:get_customers"%}">
     {% csrf_token %}
     <input type="text" placeholder="Search by name..." name="search_data">
@@ -154,7 +112,7 @@
                     <a href="{{ customer.get_absolute_url }}">{{customer.id}}</a>
                 </td>
               <td>
-                {{customer.name}} {{customer.surname}} ({{customer.second_surname}})
+                {{customer.name}} {{customer.surname}} {{customer.second_surname}}
               </td>
               <td>
                 {{customer.email}}
