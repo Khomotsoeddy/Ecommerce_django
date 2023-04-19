@@ -40,3 +40,4 @@ pandas
 selenium
 webdriver-manager
 fpdf
+xlwt

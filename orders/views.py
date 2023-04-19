@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from rest_framework import viewsets
@@ -47,6 +48,27 @@ def admin_orders(request):
 
     print(orders)
     return render(request, "admin/orders.html", {"orders": orders})
+
+def download_txt(request):
+    # Create some text content
+    content = "This is some example text.\nIt can have multiple lines.\n"
+
+    orders = Order.objects.all()
+
+    for order in orders:
+        print(order.id)
+
+        data = '{orderId: '+ str(order.id)+ ',full name: '+order.full_name+',email: '+order.email+',order date:'+ str(order.created)+',address: '+order.address1+ order.address2+ order.postal_code+',total paid:'+ str(order.total_paid)+'},\n'
+        content += data
+        print("====================>afrer",content)
+
+    messege = content
+
+    # Create the HttpResponse object with the content and file type header
+    response = HttpResponse(messege, content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename="example.txt"'
+
+    return response
 
 class OrdersListView(viewsets.ModelViewSet):
     serializer_class = OrderSerializer

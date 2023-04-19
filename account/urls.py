@@ -68,11 +68,14 @@ urlpatterns = [
     path("addresses/delete/<slug:id>/", views.delete_address, name="delete_address"),
     path("addresses/set_default/<slug:id>/", views.set_default, name="set_default"),
     path("user_orders/", views.user_orders, name="user_orders"),
-    path("order_detail", views.order_detail, name='order_detail'),
+    path("order_detail/", views.order_detail, name='order_detail'),
+    path("admin-order-detail/", views.order_detail_admin, name="admin_order_details"),
     # Wish List
     path("wishlist/", views.wishlist, name="wishlist"),
     path("wishlist/add_to_wishlist/<int:id>", views.add_to_wishlist, name="user_wishlist"),
     path('data/',include(router.urls)),
     path("all/get_customers/",views.get_customers, name="get_customers"),
-    path("customer-d/<slug:id>", views.customer_detail, name="customer_detail")
+    path("customer-d/<slug:id>", views.customer_detail, name="customer_detail"),
+    path('download_customers', views.download_all_customer_excel, name='download_customers'),
+    path('deactivate-user', views.deactivate_user, name="deactivate"),
 ]

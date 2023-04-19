@@ -53,7 +53,33 @@ def inqueries(request):
 def delete(request):
     if request.POST.get('action') == 'post':
         inquiry_id = int(request.POST.get('inquiryid'))
-        Inquiry.objects.filter(id = inquiry_id).delete()
+        inquiry = Inquiry.objects.filter(id = inquiry_id)
+        for iq in inquiry:
+            name = iq.name
+            email = iq.email
+        inquiry.delete()
+
+        me = 'powerwm111@gmail.com'
+        you = email
+        subjectE = "Inquiry Conclusion"
+        password = 'kddxamltpmiawtra'
+        email_body = "<html><boby>"+"Hi "+name+"<br><br>Your inquery "+inquiry_id+" has been serviced. So it is deleted<br><br><br>Regards<br>Mega Team"+"</body></html>"
+        email_message = MIMEMultipart('alternative',None,[MIMEText(email_body, 'html')])
+
+        email_message['subject'] = subjectE
+        email_message['from'] = me
+        email_message['to'] = email
+
+        try:
+            server = smtplib.SMTP('smtp.gmail.com:587')
+            server.ehlo()
+            server.starttls()
+            server.login(me,password)
+            server.sendmail(me,you,email_message.as_string())
+            print(email_message.as_string())
+            server.quit()
+        except Exception as e:
+            print(f'error in sending email: {e}')
     
     inqueries = Inquiry.objects.all()
     return render(request, 'admin/query.html', {"inqueries": inqueries})

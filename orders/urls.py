@@ -11,5 +11,6 @@ urlpatterns = [
     path('add/', views.add, name='add'),
     path('my-orders', views.user_orders, name='my-orders'),
     path('orders', views.admin_orders, name='orders'),
-    path('data/',include(router.urls))
+    path('data/',include(router.urls)),
+     path('download-txt/', views.download_txt, name='download_txt'),
 ]

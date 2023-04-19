@@ -1,13 +1,44 @@
-{% extends "../base.html" %}
-{% load static %}
-{% block title %}Customer Details{%endblock %}
+{% extends "../base.html" %} 
+{% load static %} 
+{% block title %}Customer Details{%endblock %} 
+
 {% block content %}
 
-<div class="col-12">
-    <h1 class="h2">Customer Details</h1>
+<div id="container" class="container">
+  <div id="items">
+    <div class="col-12">
+      <h1 class="h2">Customer Details</h1>
+    </div>
+    <hr />
+
+    <div class="row">
+      <div class="col-12 bg-light p-3 d-flex justify-content-between">
+        <div class="d-flex d-flex-inline">
+          <div class="pe-3">Customer#: <br />{{ customer.id }}</div>
+          <div class="pe-3">Name: <br />{{ customer.name }}</div>
+          <div class="pe-3">Surname: <br />{{ customer.surname }}</div>
+          <div class="pe-3">Maternal name: <br />{{ customer.second_surname }}</div>
+          <div class="pe-3">Email: <br />{{ customer.email }}</div>
+          <div class="pe-3">Identity number: <br />{{ customer.id_number }}</div>
+          <div class="pe-3">Created On: <br />{{ customer.created }}</div>
+        </div>
+      </div>
+      <div class="col-12 bg-light p-3 d-flex justify-content-between">
+        <button class="btn btn-secondary btn-lg">
+          <a href="{% url 'account:get_customers' %}" class="text-reset text-decoration-none">&#8249; Back</a>
+        </button>
+
+        {% comment %} <button class="btn btn-secondary btn-lg">
+          
+          <a href="{% url 'account:deactivate' %}" value={{customer.id}} class="text-reset text-decoration-none">deactivate user</a>
+        </button> {% endcomment %}
+        
+        <div class="text-end">
+          Active: <br /><span class="fw-bold">{{customer.is_active}}</span>
+        </div>
+      
+      </div>
+    </div>
   </div>
-  <hr/>
-
-<h1>Okay</h1>
-
-{% endblock %}
+</div>
+{% endblock%}

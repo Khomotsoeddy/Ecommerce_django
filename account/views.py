@@ -34,6 +34,47 @@ from .forms import RegistrationForm, UserAddressForm, UserEditForm
 from .models import Address, Customer
 from .tokens import account_activation_token
 from fpdf import FPDF
+import xlwt
+from django.http import HttpResponse
+
+@login_required
+def download_all_customer_excel(request):
+    print('============> im here')
+    response = HttpResponse(content_type = 'application/ms-excel')
+
+    response['Content-Disposition'] = 'attachment; filename="Customers.xls"'
+
+    wb = xlwt.Workbook(encoding = 'utf-8')
+
+    ws = wb.add_sheet('customers')
+
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+
+    font_style.font.bold = True
+
+    columns = ['id','name','surname','second surname',
+               'email','mobile','ID number','Date of Birth',
+               'Age','Is Active','Created On','Gender']
+
+    for col_num  in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    font_style = xlwt.XFStyle()
+
+    customers = Customer.objects.filter(is_staff=False).values_list(
+        'id','name','surname','second_surname','email','mobile','id_number','date_of_birth','age_number','is_active','created','gender')
+    
+    customers =[[x.strftime("%Y-%m-%d %H:%M") if isinstance(x, datetime) else x for x in row] for row in customers ]
+    customers = [[x.strftime("%Y-%m-%d") if isinstance(x, date) else x for x in row]  for row in customers]
+    for row in customers:
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+
+    wb.save(response)
+    return response
 
 
 @login_required
@@ -208,6 +249,7 @@ def get_customers(request):
 def customer_detail(request, id):
 
     customer = get_object_or_404(Customer.objects.all().filter(id=id))
+    print(customer.id)
     return render(request, "admin/customer-detail.html",{"customer":customer} )
 
 # Addresses
@@ -339,6 +381,25 @@ def order_detail(request):
     
     
     return render(request, "account/dashboard/order_detail.html",{"orders": orders, 'delivery_option':delivery_option})
+
+def order_detail_admin(request):
+
+    order_id = request.GET['order_id']
+
+    print(order_id)
+
+    option = OrderDeliveryOption.objects.filter(order=order_id[0])
+    orders = Order.objects.filter(billing_status=True).filter(id=order_id[0])
+    for op in option:
+        delivery_option = DeliveryOptions.objects.filter(id=op.delivery_option)
+    
+    
+    return render(request, "account/dashboard/order_detail.html",{"orders": orders, 'delivery_option':delivery_option})
+
+@login_required
+def deactivate_user(request, id):
+    customer = Customer.objects.get(id = id)
+    return redirect("account:get_customers")
 
 class CustomersListView(viewsets.ModelViewSet):
     serializer_class = CustomersSerializer

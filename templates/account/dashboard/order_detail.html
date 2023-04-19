@@ -51,7 +51,13 @@
   
   <div class="col-12 bg-light p-3 d-flex justify-content-between">
     <button class="btn btn-secondary btn-lg">
-      <a class="text-reset text-decoration-none" href="{% url 'account:user_orders' %}">&#8249; Back</a>
+      <a class="text-reset text-decoration-none"
+      {% if request.user.is_superuser %}
+      href="{% url 'orders:orders' %}"
+      {% else %}
+       href="{% url 'account:user_orders' %}"
+       {% endif %}>&#8249; Back</a>
+      
     </button>
     {% for delivery in delivery_option%}
     <div class="text-end">

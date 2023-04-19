@@ -58,7 +58,7 @@
             <tr>
                 <th>
                     <button>
-                        Customer ID
+                        ID
                         <span aria-hidden="true"></span>
                     </button>
                 </th>
@@ -76,7 +76,7 @@
                 </th>
                 <th>
                     <button>
-                    Date of Birth
+                    DoB
                     <span aria-hidden="true"></span>
                     </button>
                 </th>
@@ -85,7 +85,7 @@
                 </th>
                 <th>
                     <button>
-                        Created Date
+                        Created on
                         <span aria-hidden="true"></span>
                     </button>
                 </th>
@@ -95,6 +95,12 @@
                         <span aria-hidden="true"></span>
                     </button>
                 </th>
+                <th>
+                  <button>
+                      Active
+                      <span aria-hidden="true"></span>
+                  </button>
+              </th>
                 <th class="num">
                     <button>
                     Age
@@ -108,7 +114,7 @@
             
             <tr>
                 
-                <td>
+                <td style="text-align: left;" class="num">
                     <a href="{{ customer.get_absolute_url }}">{{customer.id}}</a>
                 </td>
               <td>
@@ -129,7 +135,10 @@
               <td>
                 {{customer.mobile}}
               </td>
-              <td class="num">
+              <td>
+                {{customer.is_active}}
+              </td>
+              <td style="text-align: left;" class="num">
                 {{customer.age_number}}
               </td>
             </tr>
@@ -141,9 +150,9 @@
        
       </div>
       <div class="d-flex justify-content-center">
-        <button id="printButton" onclick="print()" type="button" class="btn btn-success">
-          Download as PDF
-        </button>
+        <form action="{% url 'account:download_customers' %}" method="get">
+          <button class="btn btn-success" type="submit">Download Excel</button>
+        </form>
       </div>
 
 
@@ -317,7 +326,7 @@ window.addEventListener('load', function () {
 });
     </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js "></script>
+    {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js "></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
@@ -335,7 +344,7 @@ docPDF.html(elementHTML, {
  windowWidth: 600
 });
 }
-</script>
+</script> {% endcomment %}
 </div>
 
 {% endblock %}
