@@ -362,11 +362,9 @@ def user_orders(request):
             return render(request, "account/dashboard/user_orders.html", {"orders": orders})
         else:
             orders = Order.objects.filter(user_id=user_id).filter(billing_status=True)
-            print(orders)
             return render(request, "account/dashboard/user_orders.html", {"orders": orders})
 
     orders = Order.objects.filter(user_id=user_id).filter(billing_status=True)
-    print(orders)
     return render(request, "account/dashboard/user_orders.html", {"orders": orders})
 
 def order_detail(request):
