@@ -26,10 +26,8 @@ from datetime import date, datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib 
-
 from dateutil.parser import parse
 import string
-
 from .forms import RegistrationForm, UserAddressForm, UserEditForm
 from .models import Address, Customer
 from .tokens import account_activation_token
@@ -159,7 +157,7 @@ def account_register(request):
                     birthdate= date(year,month,day)
                     user.date_of_birth = birthdate
                     user.is_active = False
-                    # user.save()
+                    user.save()
 
                     current_site = get_current_site(request)
                     subject = "Activate your Account"
@@ -265,9 +263,11 @@ def add_address(request):
     if request.method == "POST":
         address_form = UserAddressForm(data=request.POST)
         if address_form.is_valid():
-            address_form = address_form.save(commit=False)
-            address_form.customer = request.user
-            address_form.save()
+            address = address_form.save(commit=False)
+            address.full_name = address_form.cleaned_data["full_name"]
+            address.postcode = address_form.cleaned_data["postcode"]
+            address.customer = request.user
+            address.save()
             return HttpResponseRedirect(reverse("account:addresses"))
     else:
         address_form = UserAddressForm()

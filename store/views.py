@@ -106,33 +106,33 @@ def get_data(request):
                     r.save()
             except Exception as e:
                 print('-',e)
-        # for sp in shoprite_product:
-        #     product_url = 'https://www.shoprite.co.za'+sp.get('href')
-        #     print(product_url)
-        #     shoprite_product_page = requests.get(url=product_url) 
+        for sp in shoprite_product:
+            product_url = 'https://www.shoprite.co.za'+sp.get('href')
+            print(product_url)
+            shoprite_product_page = requests.get(url=product_url) 
 
-        #     print(shoprite_product_page)
+            print(shoprite_product_page)
 
-        #     shoprite_product_soup = BeautifulSoup(shoprite_product_page.content,'html.parser')
+            shoprite_product_soup = BeautifulSoup(shoprite_product_page.content,'html.parser')
 
-        #     try:
-        #         picture_source = 'https://www.shoprite.co.za'+shoprite_product_soup.find('img',attrs={'class':'pdp__image__thumb'}).get('src')
-        #         dirty_price = shoprite_product_soup.find('span',attrs={'class':'now'}).text
-        #         price = (dirty_price[2:9])
-        #         product_name = shoprite_product_soup.find('h1',attrs={'class':'pdp__name'}).text
-        #         print("details", picture_source,'\n',price,'\n',product_name)
+            try:
+                picture_source = 'https://www.shoprite.co.za'+shoprite_product_soup.find('img',attrs={'class':'pdp__image__thumb'}).get('src')
+                dirty_price = shoprite_product_soup.find('span',attrs={'class':'now'}).text
+                price = (dirty_price[2:9])
+                product_name = shoprite_product_soup.find('h1',attrs={'class':'pdp__name'}).text
+                print("details", picture_source,'\n',price,'\n',product_name)
 
-        #         print(Product.objects.filter(product_name=product_name).filter(shop_retail='Shoprite').exists())
+                print(Product.objects.filter(product_name=product_name).filter(shop_retail='Shoprite').exists())
                 
-        #         if Product.objects.filter(product_name=product_name).filter(shop_retail='Shoprite').exists():
-        #             r = Product.objects.get(product_name=product_name,shop_retail='Shoprite')
-        #             r.price = price
-        #             r.save()
-        #         else:
-        #             r = Product(product_name=product_name,product_image=picture_source,price =price ,shop_retail='Shoprite')
-        #             r.save()
-        #     except Exception as e:
-        #         print('-',e)
+                if Product.objects.filter(product_name=product_name).filter(shop_retail='Shoprite').exists():
+                    r = Product.objects.get(product_name=product_name,shop_retail='Shoprite')
+                    r.price = price
+                    r.save()
+                else:
+                    r = Product(product_name=product_name,product_image=picture_source,price =price ,shop_retail='Shoprite')
+                    r.save()
+            except Exception as e:
+                print('-',e)
 
     return render(request, "account/dashboard/dashboard.html")
 

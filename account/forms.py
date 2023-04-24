@@ -16,6 +16,12 @@ class UserAddressForm(forms.ModelForm):
         if counter > 0:
             raise forms.ValidationError("Incorect name")
         return full_name
+    
+    def clean_name(self):
+        postcode = self.cleaned_data['postcode']
+        if not postcode.isdigit() or len(postcode) != 4 :
+            raise forms.ValidationError("Incorect postal code")
+        return postcode
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -33,7 +39,7 @@ class UserAddressForm(forms.ModelForm):
             {"class": "form-control mb-2 account-form", "placeholder": "City"}
         )
         self.fields["postcode"].widget.attrs.update(
-            {"class": "form-control mb-2 account-form", "placeholder": "Postal code"}
+            {"class": "form-control mb-2 account-form", "placeholder": "Postal code", 'type':'number'}
         )
 
 
