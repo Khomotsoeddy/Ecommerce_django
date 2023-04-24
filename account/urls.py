@@ -77,5 +77,7 @@ urlpatterns = [
     path("all/get_customers/",views.get_customers, name="get_customers"),
     path("customer-d/<slug:id>", views.customer_detail, name="customer_detail"),
     path('download_customers', views.download_all_customer_excel, name='download_customers'),
-    path('deactivate-user', views.deactivate_user, name="deactivate"),
+    path('deactivate-user', views.deactivate_user, name="deactivate_customer"),
+    path('activate-user', views.activate_user, name="activate_customer"),
+    path("delete_customer", views.delete_customer, name="delete_customer")
 ]

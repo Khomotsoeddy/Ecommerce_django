@@ -32,13 +32,73 @@
           
           <a href="{% url 'account:deactivate' %}" value={{customer.id}} class="text-reset text-decoration-none">deactivate user</a>
         </button> {% endcomment %}
+        <a type="button" id="activate-button" data-index="{{customer.id}}" class="delete-button text-decoration-none small">Activate</a>
+        <a type="button" id="deactivate-button" data-index="{{customer.id}}" class="delete-button text-decoration-none small">Deactivate</a>
+        <a type="button" id="delete-button" data-index="{{customer.id}}" class="delete-button text-decoration-none small">Delete</a>
         
         <div class="text-end">
           Active: <br /><span class="fw-bold">{{customer.is_active}}</span>
         </div>
-      
       </div>
     </div>
   </div>
+  <script>
+    $(document).on("click", "#delete-button", function (e) {
+        e.preventDefault();
+        var inquireid = $(this).data("index");
+        $.ajax({
+            type: "POST",
+            url: '{% url "account:delete_customer" %}',
+            data: {
+                customerid: $(this).data("index"),
+                csrfmiddlewaretoken: "{{csrf_token}}",
+                action: "post",
+            },
+            success: function (json) {
+                $('.customer[data-index="' + customerid + '"]').remove();
+                location.href = '{% url 'account:get_customers' %}';
+            },
+            error: function (xhr, errmsg, err) {},
+        });
+    });
+  </script>
+  <script>
+    $(document).on("click", "#deactivate-button", function (e) {
+        e.preventDefault();
+        var inquireid = $(this).data("index");
+        $.ajax({
+            type: "POST",
+            url: '{% url "account:deactivate_customer" %}',
+            data: {
+                customerid: $(this).data("index"),
+                csrfmiddlewaretoken: "{{csrf_token}}",
+                action: "post",
+            },
+            success: function (json) {
+                location.href = '{% url 'account:get_customers' %}';
+            },
+            error: function (xhr, errmsg, err) {},
+        });
+    });
+  </script>
+  <script>
+    $(document).on("click", "#activate-button", function (e) {
+        e.preventDefault();
+        var inquireid = $(this).data("index");
+        $.ajax({
+            type: "POST",
+            url: '{% url "account:activate_customer" %}',
+            data: {
+                customerid: $(this).data("index"),
+                csrfmiddlewaretoken: "{{csrf_token}}",
+                action: "post",
+            },
+            success: function (json) {
+              location.href = '{% url 'account:get_customers' %}';
+            },
+            error: function (xhr, errmsg, err) {},
+        });
+    });
+  </script>
 </div>
 {% endblock%}

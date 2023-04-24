@@ -36,6 +36,45 @@ import xlwt
 from django.http import HttpResponse
 
 @login_required
+def delete_customer(request):
+    if request.POST.get('action') == 'post':
+        customer_id = int(request.POST.get('customerid'))
+        customer = Customer.objects.filter(id = customer_id)
+
+        print("========> they are removing me",customer)
+
+        customer.delete()
+
+    customers = Customer.objects.filter(is_staff=False)
+    return render(request, "admin/customers.html",{"customers":customers} )
+
+@login_required
+def deactivate_user(request):
+    if request.POST.get('action') == 'post':
+        customer_id = int(request.POST.get('customerid'))
+        customer = Customer.objects.get(id = customer_id)
+
+        customer.is_active = False
+        customer.save()
+
+        print("========> they are deactivating me",customer)
+    customers = Customer.objects.filter(is_staff=False)
+    return render(request, "admin/customers.html",{"customers":customers} )
+
+@login_required
+def activate_user(request):
+    if request.POST.get('action') == 'post':
+        customer_id = int(request.POST.get('customerid'))
+        customer = Customer.objects.get(id = customer_id)
+
+        customer.is_active = True
+        customer.save()
+        print("========> they are activating me",customer)
+        
+    customers = Customer.objects.filter(is_staff=False)
+    return render(request, "admin/customers.html",{"customers":customers} )
+
+@login_required
 def download_all_customer_excel(request):
     print('============> im here')
     response = HttpResponse(content_type = 'application/ms-excel')
@@ -383,21 +422,17 @@ def order_detail(request):
 def order_detail_admin(request):
 
     order_id = request.GET['order_id']
+    order_id = order_id.replace("/","")
 
-    print(order_id)
+    print("============>",order_id)
 
     option = OrderDeliveryOption.objects.filter(order=order_id[0])
-    orders = Order.objects.filter(billing_status=True).filter(id=order_id[0])
+    orders = Order.objects.filter(billing_status=True).filter(id=order_id)
     for op in option:
         delivery_option = DeliveryOptions.objects.filter(id=op.delivery_option)
     
     
     return render(request, "account/dashboard/order_detail.html",{"orders": orders, 'delivery_option':delivery_option})
-
-@login_required
-def deactivate_user(request, id):
-    customer = Customer.objects.get(id = id)
-    return redirect("account:get_customers")
 
 class CustomersListView(viewsets.ModelViewSet):
     serializer_class = CustomersSerializer
