@@ -34,6 +34,7 @@ from .tokens import account_activation_token
 from fpdf import FPDF
 import xlwt
 from django.http import HttpResponse
+from django.contrib.messages import get_messages
 
 @login_required
 def delete_customer(request):
@@ -70,7 +71,7 @@ def activate_user(request):
         customer.is_active = True
         customer.save()
         print("========> they are activating me",customer)
-        
+
     customers = Customer.objects.filter(is_staff=False)
     return render(request, "admin/customers.html",{"customers":customers} )
 
@@ -276,8 +277,12 @@ def get_customers(request):
     if request.method == "POST":
         deta =  request.POST['search_data']
         print("---------->",deta)
-        customers = Customer.objects.annotate(full_name=Concat('name', V(" "), 'surname')).annotate(full_name_second=Concat('name', V(" "), 'surname', V(' '), 'second_surname')).filter(Q(full_name_second=deta)|Q(full_name=deta) | Q(name__contains=deta) | Q(surname__contains=deta) | Q(second_surname__contains=deta)).filter(is_staff=False)
-        return render(request, "admin/customers.html",{"customers":customers} )
+        if deta == "":
+            print("nothing")
+            messages.error(request, 'Please insert something')
+        else:
+            customers = Customer.objects.annotate(full_name=Concat('name', V(" "), 'surname')).annotate(full_name_second=Concat('name', V(" "), 'surname', V(' '), 'second_surname')).filter(Q(full_name_second=deta)|Q(full_name=deta) | Q(name__contains=deta) | Q(surname__contains=deta) | Q(second_surname__contains=deta)).filter(is_staff=False)
+            return render(request, "admin/customers.html",{"customers":customers} )
 
     customers = Customer.objects.filter(is_staff=False)
     return render(request, "admin/customers.html",{"customers":customers} )
@@ -305,9 +310,17 @@ def add_address(request):
             address = address_form.save(commit=False)
             address.full_name = address_form.cleaned_data["full_name"]
             address.postcode = address_form.cleaned_data["postcode"]
-            address.customer = request.user
-            address.save()
-            return HttpResponseRedirect(reverse("account:addresses"))
+            counter = len(re.findall(r'\d', address.full_name))
+            if counter > 0:
+                messages.error(request, 'Enter valid name')
+            if not address.postcode.isdigit() or len(address.postcode) != 4 :
+                messages.error(request, 'Enter valid postal code')
+
+            storage = get_messages(request)
+            if len(storage) == 0:
+                address.customer = request.user
+                address.save()
+                return HttpResponseRedirect(reverse("account:addresses"))
     else:
         address_form = UserAddressForm()
     return render(request, "account/dashboard/edit_addresses.html", {"form": address_form})

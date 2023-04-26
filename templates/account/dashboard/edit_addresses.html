@@ -6,11 +6,23 @@
   <h1 class="h3">Create/Edit Address</h1>
   <div>Add a new delivery <b>address</b> and delivery preferences</div>
   <hr />
+
+    {% if messages %}
+        {% for message in messages %}
+        <p>Please correct the following errors:</p>
+         {% if message.tags %}  <div class="alert alert-primary" role="alert">{{ message }}</div> {% endif %}
+        {% endfor %} 
+    {% endif %}
   <form name="address_form" class="account-form" method="post" enctype="multipart/form-data">
     {% if form.errors %}
-    <div class="alert alert-primary" role="alert">
-      Error: Please try again!
-    </div>
+    <p>Please correct the following errors:</p>
+    {% for field in form %}
+  {% if field.errors %}
+  <div class="alert alert-primary" role="alert">
+    {{ field.label }}: {{ field.errors|striptags }}
+  </div>
+  {% endif %}
+  {% endfor %}
     {% endif %}
     {% csrf_token %}
     <label class="small fw-bold">{{ form.full_name.label}}</label>

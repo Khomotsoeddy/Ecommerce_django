@@ -6,6 +6,10 @@ from .models import Customer, Address
 import re
 
 class UserAddressForm(forms.ModelForm):
+
+    full_name = forms.CharField(
+        label='Enter Name', min_length=4, max_length=50, help_text='Required')
+    
     class Meta:
         model = Address
         fields = ["full_name", "phone", "address_line", "address_line2", "town_city", "postcode"]
@@ -17,7 +21,7 @@ class UserAddressForm(forms.ModelForm):
             raise forms.ValidationError("Incorect name")
         return full_name
     
-    def clean_name(self):
+    def clean_postalcode(self):
         postcode = self.cleaned_data['postcode']
         if not postcode.isdigit() or len(postcode) != 4 :
             raise forms.ValidationError("Incorect postal code")

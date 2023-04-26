@@ -21,7 +21,7 @@ order{%endblock %} {% block content %}
           </th>
           <th>
             <button>
-              Full Name
+              Recipient
               <span aria-hidden="true"></span>
             </button>
           </th>
@@ -44,6 +44,9 @@ order{%endblock %} {% block content %}
               <span aria-hidden="true"></span>
             </button>
           </th>
+          <th>
+              Action
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -55,11 +58,8 @@ order{%endblock %} {% block content %}
         </style> {% endcomment %}
         <tr>
           {% comment %} <td>{{order.id}}</td> {% endcomment %}
-          <td style="text-align: left;" class="num">
-          <form class='form' role="form" action="{% url 'account:admin_order_details' %}">
-            <input type="text" hidden name='order_id' value={{order.id}}/>
-            <button style='border: none;color: blue;background: white;'  type="submit">{{order.id}}</button>
-          </form>
+          <td style="text-align: left;" class="num">{{order.id}}
+          
         </td>
           <td >{{order.full_name}}</td>
           <td>{{order.email}}</td>
@@ -69,6 +69,12 @@ order{%endblock %} {% block content %}
             {{order.country_code}}
           </td>
           <td style="text-align: left;" class="num">{{order.total_paid}}</td>
+          <td>
+            <form class='form' role="form" action="{% url 'account:admin_order_details' %}">
+              <input type="text" hidden name='order_id' value={{order.id}}/>
+              <button class="btn"  type="submit">View</button>
+            </form>
+          </td>
         </tr>
         {% endfor %}
       </tbody>

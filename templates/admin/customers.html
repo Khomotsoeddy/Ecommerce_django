@@ -42,6 +42,11 @@
     <h1 class="h2">Customer Summary</h1>
   </div>
   <hr/>
+  {% if messages %}
+        {% for message in messages %}
+         {% if message.tags %}  <div class="alert alert-primary" role="alert">{{ message }}</div> {% endif %}
+        {% endfor %}
+    {% endif %}
   <form method="post" class="example" action="{% url "account:get_customers"%}">
     {% csrf_token %}
     <input type="text" placeholder="Search by name..." name="search_data">
@@ -64,7 +69,7 @@
                 </th>
                 <th>
                     <button>
-                    Full Name
+                      Name
                     <span aria-hidden="true"></span>
                     </button>
                 </th>
@@ -107,6 +112,9 @@
                     <span aria-hidden="true"></span>
                     </button>
                 </th>
+                <th >
+                  Action
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -115,7 +123,7 @@
             <tr>
                 
                 <td style="text-align: left;" class="num">
-                    <a href="{{ customer.get_absolute_url }}">{{customer.id}}</a>
+                  {{customer.id}}
                 </td>
               <td>
                 {{customer.name}} {{customer.surname}} {{customer.second_surname}}
@@ -140,6 +148,9 @@
               </td>
               <td style="text-align: left;" class="num">
                 {{customer.age_number}}
+              </td>
+              <td>
+                <a type="button" href="{{ customer.get_absolute_url }}">Edit</a>
               </td>
             </tr>
             {% endfor %}
