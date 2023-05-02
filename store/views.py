@@ -4,6 +4,8 @@ import requests
 from bs4 import BeautifulSoup #For web scraping
 import pandas as pd
 from django.contrib import messages
+from rest_framework import viewsets
+from store.serializer import productSerializer
 
 from .models import Product
 import random
@@ -183,3 +185,8 @@ def product_detail(request, id):
 
     product = get_object_or_404(Product.objects.all().filter(id=id))
     return render(request, "store/single.html", {"product": product})
+
+
+class ProductListView(viewsets.ModelViewSet):
+    serializer_class = productSerializer
+    queryset = Product.objects.all()
