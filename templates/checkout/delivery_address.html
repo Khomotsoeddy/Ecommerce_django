@@ -15,10 +15,10 @@
 
 
 <div class="container">
-  <div class="row g-3">
+  {% comment %} <div class="row g-3">
     {% if addresses|length == 0 %}
     <div class="col-12">There are no delivery addresses, <a href="{% url 'account:add_address' %}">add address</a></div>
-    {% else %}
+    {% else %}  {% endcomment %}
     <div class="col-md-4 col-lg-4 order-md-last p-0 order-3">
     
 <div class="d-flex bd-highlight ms-0">
@@ -36,7 +36,7 @@
 <a role="button" href="{% url 'checkout:payment_selection' %}" class="btn btn-success fw-bold w-100" type="button">Pay Securely</a>
 </div>
     
-    <div class="col-md-7 col-lg-8">
+    {% comment %} <div class="col-md-7 col-lg-8">
       {% for address in addresses %}
       {% if not address.default %}
         <h1 class="h5 pt-4">Other Addresses</h1>
@@ -72,7 +72,7 @@
       </div>
       {% endfor %}
     </div>
-    {% endif %}
+     {% endif %} {% endcomment %}
   </div>
 
 </div>

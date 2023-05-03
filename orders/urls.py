@@ -6,6 +6,7 @@ app_name = 'orders'
 router = routers.DefaultRouter()
 router.register(r'orders', views.OrdersListView, basename='orders')
 router.register(r'order-items', views.OrderItemsListView, basename='order-items')
+router.register(r'OrderDeliveryOption', views.OrderDeliveryOptionList, basename='OrderDeliveryOption')
 
 urlpatterns = [
     path('add/', views.add, name='add'),

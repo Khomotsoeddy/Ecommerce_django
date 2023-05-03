@@ -58,25 +58,25 @@ def delivery_address(request):
 
     addresses = Address.objects.filter(customer=request.user).order_by("-default")
     
-    if len(addresses) ==0:
-        return render(request, "account/dashboard/addresses.html")
-    else:
-        if "address" not in request.session:
-            session["address"] = {"address_id": str(addresses[0].id)}
-        else:
-            session["address"]["address_id"] = str(addresses[0].id)
-            session.modified = True
+    # if len(addresses) ==0:
+    #     return render(request, "account/dashboard/addresses.html")
+    # else:
+    #     if "address" not in request.session:
+    #         session["address"] = {"address_id": str(addresses[0].id)}
+    #     else:
+    #         session["address"]["address_id"] = str(addresses[0].id)
+    #         session.modified = True
         
-    return render(request, "checkout/delivery_address.html", {"addresses": addresses})
+    return render(request, "checkout/delivery_address.html")
 
 
 @login_required
 def payment_selection(request):
 
     session = request.session
-    if "address" not in request.session:
-        messages.success(request, "Please select address option")
-        return HttpResponseRedirect(request.META["HTTP_REFERER"])
+    # if "address" not in request.session:
+    #     messages.success(request, "Please select address option")
+    #     return HttpResponseRedirect(request.META["HTTP_REFERER"])
     
     basket = Basket(request)
     print('--------------->',basket.get_total_price())

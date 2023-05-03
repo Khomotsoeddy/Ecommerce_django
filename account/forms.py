@@ -60,6 +60,14 @@ class UserLoginForm(AuthenticationForm):
         }
     ))
 
+    def clean_email(self):
+        username = self.cleaned_data['username']
+        u = Customer.objects.filter(email=username)
+        if not u:
+            raise forms.ValidationError(
+                'Unfortunatley we can not find that email address')
+        return username
+
 class AdminLoginForm(AuthenticationForm):
 
     username = forms.CharField(widget=forms.TextInput(

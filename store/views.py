@@ -51,9 +51,8 @@ def product_all(request):
             messages.error(request, 'Please insert something')
         elif Product.objects.filter(product_name__contains=deta).exists():
             products = Product.objects.filter(product_name__contains=deta).order_by('price')
-            products = products[0]
             print("my product",products)
-            return render(request, "store/index.html", {"products": products, 'isSearch': True})
+            return render(request, "store/index.html", {"products": products, 'isSearch': False})
         else:
             messages.info(request, "Product not found, please check your spelling")
             products = Product.objects.all()

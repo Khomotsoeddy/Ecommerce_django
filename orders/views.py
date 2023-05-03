@@ -3,9 +3,9 @@ from django.http.response import JsonResponse
 from django.shortcuts import render
 from rest_framework import viewsets
 from basket.basket import Basket
-from orders.serializer import OrderItemsSerializer, OrderSerializer
+from orders.serializer import OrderDeliveryOptionSerializer, OrderItemsSerializer, OrderSerializer
 
-from .models import Order, OrderItem
+from .models import Order, OrderDeliveryOption, OrderItem
 
 
 def add(request):
@@ -78,3 +78,7 @@ class OrdersListView(viewsets.ModelViewSet):
 class OrderItemsListView(viewsets.ModelViewSet):
     serializer_class = OrderItemsSerializer
     queryset = OrderItem.objects.all()
+
+class OrderDeliveryOptionList(viewsets.ModelViewSet):
+    serializer_class = OrderDeliveryOptionSerializer
+    queryset = OrderDeliveryOption.objects.all()
