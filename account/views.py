@@ -1,6 +1,6 @@
 import logging as logger
 from django.contrib import messages
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout,authenticate
 from django.db.models import Q, F
 from django.db.models import Value as V
 import re
@@ -20,21 +20,45 @@ from inquiry.models import Inquiry
 from orders.models import Order, OrderDeliveryOption
 from orders.views import user_orders
 from store.models import Product
-import re
-import calendar
 from datetime import date, datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib 
 from dateutil.parser import parse
 import string
-from .forms import RegistrationForm, UserAddressForm, UserEditForm
+from .forms import LoginForm, RegistrationForm, UserAddressForm, UserEditForm, UserLoginForm
 from .models import Address, Customer
 from .tokens import account_activation_token
 from fpdf import FPDF
 import xlwt
 from django.http import HttpResponse
 from django.contrib.messages import get_messages
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+from django.contrib.auth.models import User
+
+def login_view(request):
+    if request.method == 'POST':
+        form = UserLoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            if Customer.objects.filter(email=username).exists():
+                if Customer.objects.filter(email=username).filter(is_active=False).exists():
+                    messages.error(request, 'Verify your email')
+                else:
+                    user = authenticate(request, username=username, password=password)
+                    if user is not None:
+                        login(request, user)
+                        return redirect('account:dashboard')
+                    else:
+                        messages.error(request, 'Invalid password.')
+            else:
+                # User does not exist
+                messages.error(request, 'User does not exist.')
+    else:
+        form = LoginForm()
+    return render(request, 'account/login.html', {'form': form})
 
 @login_required
 def delete_customer(request):
@@ -260,6 +284,7 @@ def account_activate(request, uidb64, token):
     else:
         return render(request, "account/registration/activation_invalid.html")
 
+@login_required
 def DownloadSammary(request):
     pdf = FPDF()
     pdf.add_page()
@@ -396,6 +421,82 @@ def set_default(request, id):
 
     return redirect("account:addresses")
 
+@login_required
+def filter_user_orders_by_date(request):
+    user_id = request.user.id
+
+    if request.method == "POST":
+
+        deta1 =  request.POST['from']
+        deta2 =  request.POST['to']
+        print('my dates',deta1,deta2)
+        try:
+            date_obj_from = datetime.strptime(deta1, '%Y-%m-%d')
+            date_obj_to = datetime.strptime(deta2, '%Y-%m-%d')
+            # Do something with the valid date object
+
+            if date_obj_to > date_obj_from:
+                print('yes')
+                orders = Order.objects.filter(user_id=user_id).filter(billing_status=True).filter(created__range=[date_obj_from,date_obj_to])
+                return render(request, "account/dashboard/user_order_report.html", {"orders": orders})
+            else:
+                print('incorrect dates')
+                messages.error(request, 'Incorrect date, From date must be less than To date')
+                return render(request, "account/dashboard/user_order_report.html")
+        except ValueError:
+            # Handle the case where the input is not a valid date
+            print('Invalid date')
+            messages.error(request, 'Invalid date')
+            return render(request, "account/dashboard/user_order_report.html")
+    
+    return render(request, "account/dashboard/user_order_report.html")
+
+@login_required
+def filter_user_orders(request):
+    user_id = request.user.id
+
+    if request.method == "POST":
+
+        deta =  request.POST['filter']
+
+        print("sorting========>",deta)
+        if deta == '2-Weeks':
+            two_weeks_ago = datetime.now() - relativedelta(weeks=2)
+            orders = Order.objects.filter(user_id=user_id, billing_status=True, created__range=(two_weeks_ago, datetime.now()))
+            print(orders)
+
+            return render(request, "account/dashboard/user_order_report.html", {"orders": orders})
+
+        if deta == '1-months':
+            one_month_ago = datetime.now() - relativedelta(months=1)
+            orders = Order.objects.filter(user_id=user_id, billing_status=True, created__range=(one_month_ago, datetime.now()))
+            print(orders)
+
+            return render(request, "account/dashboard/user_order_report.html", {"orders": orders})
+        if deta == '2-months':
+            one_month_ago = datetime.now() - relativedelta(months=2)
+            orders = Order.objects.filter(user_id=user_id, billing_status=True, created__range=(one_month_ago, datetime.now()))
+            print(orders)
+
+            return render(request, "account/dashboard/user_order_report.html", {"orders": orders})
+        if deta == '3-months':
+            one_month_ago = datetime.now() - relativedelta(months=3)
+            orders = Order.objects.filter(user_id=user_id, billing_status=True, created__range=(one_month_ago, datetime.now()))
+            print(orders)
+
+            return render(request, "account/dashboard/user_order_report.html", {"orders": orders})
+
+    # orders = Order.objects.filter(user_id=user_id).filter(billing_status=True)
+    return render(request, "account/dashboard/user_order_report.html")
+
+@login_required
+def admin_customers_report(request):
+    print(request.method)
+    if request.method == "POST":
+
+        return render(request, "admin/admin_customers_report.html")
+    
+    return render(request, "admin/admin_customers_report.html")
 
 @login_required
 def user_orders(request):
@@ -419,6 +520,7 @@ def user_orders(request):
     orders = Order.objects.filter(user_id=user_id).filter(billing_status=True)
     return render(request, "account/dashboard/user_orders.html", {"orders": orders})
 
+@login_required
 def order_detail(request):
     user_id = request.user.id
 
@@ -432,6 +534,7 @@ def order_detail(request):
     
     return render(request, "account/dashboard/order_detail.html",{"orders": orders, 'delivery_option':delivery_option})
 
+@login_required
 def order_detail_admin(request):
 
     order_id = request.GET['order_id']

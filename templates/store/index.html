@@ -109,7 +109,7 @@
           <h1 class="h3">Popular</h1>
         </div>
             <div class="p-2 bd-highlight">
-              Sort By:
+              <i class="fa-solid fa-filter"></i>Filter By:
               <form name="productSort" method='post' action="{% url 'store:sort_products' %}" >
                 {% csrf_token %}
                 <select onChange='productSort.submit();' size=1 id="nav_combo" name="sort1">

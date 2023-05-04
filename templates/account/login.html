@@ -5,11 +5,11 @@
 <form class="account-form" action="{% url 'account:login' %}" method="post">
   {% csrf_token %}
   <h3 class="mb-4">Sign In</h3>
-  {% if form.errors %}
-  <div class="alert alert-primary" role="alert">
-    Error: Username or Password not correct!
-  </div>
-  {% endif %}
+  {% if messages %}
+        {% for message in messages %}
+         {% if message.tags %}  <div class="alert alert-primary" role="alert">{{ message }}</div> {% endif %}
+        {% endfor %}
+    {% endif %}
   <label class="form-label">{{ form.username.label}}</label>
   {{ form.username}}
   <label class="form-label">{{ form.password.label}}</label>

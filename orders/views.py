@@ -48,6 +48,14 @@ def admin_orders(request):
 
     print(orders)
     return render(request, "admin/orders.html", {"orders": orders})
+        
+def admin_orders_report(request):
+    print(request.method)
+    if request.method == "POST":
+
+        return render(request, "admin/admin_orders_report.html")
+    
+    return render(request, "admin/admin_orders_report.html")
 
 def download_txt(request):
     # Create some text content

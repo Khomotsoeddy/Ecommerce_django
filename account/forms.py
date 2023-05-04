@@ -47,8 +47,7 @@ class UserAddressForm(forms.ModelForm):
         )
 
 
-
-class UserLoginForm(AuthenticationForm):
+class UserLoginForm(forms.Form):
 
     username = forms.CharField(widget=forms.TextInput(
         attrs={'class': 'form-control mb-3', 'placeholder': 'Username', 'id': 'login-username'}))
@@ -67,6 +66,17 @@ class UserLoginForm(AuthenticationForm):
             raise forms.ValidationError(
                 'Unfortunatley we can not find that email address')
         return username
+    
+class LoginForm(forms.Form):
+    username = forms.CharField(widget=forms.TextInput(
+        attrs={'class': 'form-control mb-3', 'placeholder': 'Username', 'id': 'login-username'}))
+    password = forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'Password',
+            'id': 'login-pwd',
+        }
+    ))
 
 class AdminLoginForm(AuthenticationForm):
 

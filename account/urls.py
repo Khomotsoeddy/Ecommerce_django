@@ -17,8 +17,8 @@ router.register(r'address', views.AddressListView, basename='address')
 urlpatterns = [
     path(
         "login/",
-        auth_views.LoginView.as_view(template_name="account/login.html", form_class=UserLoginForm),
-        name="login",
+        views.login_view,
+        name="login"
     ),
     path("logout/", auth_views.LogoutView.as_view(next_page="/account/login/"), name="logout"),
     path("register/", views.account_register, name="register"),
@@ -79,5 +79,8 @@ urlpatterns = [
     path('download_customers', views.download_all_customer_excel, name='download_customers'),
     path('deactivate-user', views.deactivate_user, name="deactivate_customer"),
     path('activate-user', views.activate_user, name="activate_customer"),
-    path("delete_customer", views.delete_customer, name="delete_customer")
+    path("delete_customer", views.delete_customer, name="delete_customer"),
+    path("filter_user_orders/", views.filter_user_orders, name='filter_user_orders'),
+    path('filter_user_orders_by_date', views.filter_user_orders_by_date, name='filter_user_orders_by_date'),
+    path('admin_customers_report/', views.admin_customers_report, name='admin_customers_report'),
 ]

@@ -6,6 +6,7 @@ order{%endblock %} {% block content %}
     <h1 class="h2">Order Summary</h1>
   </div>
   <hr />
+  <button><a href="{% url "orders:admin_orders_report" %}" class="text-reset text-decoration-none" role="button"> Generate Report</a></button>
   {% if not orders%}
   <div class="col-12">There are currently no orders</div>
   {% else %}
