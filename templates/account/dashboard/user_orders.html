@@ -13,7 +13,7 @@
   
   <div class="d-flex flex-row-reverse bd-highlight">
     <div class="p-2 bd-highlight">
-      Sort By:
+      <i class="fa-solid fa-sort"></i>Sort By:
       <form name="orderSort" method='post' action="{% url 'account:user_orders' %}" >
         {% csrf_token %}
         <select onChange='orderSort.submit();' size=1 id="nav_combo" name="sort">

@@ -41,3 +41,8 @@ selenium
 webdriver-manager
 fpdf
 xlwt
+matplotlib
+python-docx
+python-docx2pdf
+python-docx-template
+pywin32

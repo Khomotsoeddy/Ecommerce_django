@@ -526,8 +526,11 @@ def order_detail(request):
 
     order_id = request.GET['order_id']
 
+    order_id = order_id.replace("/", "" )
+    print('---------->',order_id)
+
     option = OrderDeliveryOption.objects.filter(order=order_id[0])
-    orders = Order.objects.filter(user_id=user_id).filter(billing_status=True).filter(id=order_id[0])
+    orders = Order.objects.filter(user_id=user_id).filter(billing_status=True).filter(id=order_id)
     for op in option:
         delivery_option = DeliveryOptions.objects.filter(id=op.delivery_option)
     

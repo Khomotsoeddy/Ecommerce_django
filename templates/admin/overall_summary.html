@@ -1,0 +1,142 @@
+{% extends "../base.html" %} 
+{% load static %} 
+{% block title %}Overall Reports{%endblock %} 
+
+{% block content %}
+
+<style>
+  
+    * {
+      box-sizing: border-box;
+    }
+    
+    .products {
+      height: 50%;
+      max-width: auto;
+      align-items: baseline;
+      display: flex;
+      flex-wrap: wrap;
+      padding: auto;
+    }
+    .card {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        max-width: 300px;
+        margin: auto;
+        text-align: center;
+        font-family: arial;
+        flex: 33.33%;
+        padding: 5px;
+      }
+      
+      .price {
+        color: grey;
+        font-size: 22px;
+      }
+      
+      .card button {
+        border: none;
+        outline: 0;
+        padding: 12px;
+        color: white;
+        background-color: #000;
+        text-align: center;
+        cursor: pointer;
+        width: 100%;
+        font-size: 18px;
+      }
+      
+      .card button:hover {
+        opacity: 0.7;
+      }
+  
+      form.example input[type=text] {
+        padding: 10px;
+        font-size: 17px;
+        border: 1px solid grey;
+        float: left;
+        width: 80%;
+        background: #f1f1f1;
+      }
+  
+        form.example button {
+        float: left;
+        width: 20%;
+        padding: 10px;
+        background: #2196F3;
+        color: white;
+        font-size: 17px;
+        border: 1px solid grey;
+        border-left: none;
+        cursor: pointer;
+      }
+  
+      form.example button:hover {
+        background: #0b7dda;
+      }
+  
+      form.example::after {
+        content: "";
+        clear: both;
+        display: table;
+      }
+  </style>
+
+<div id="container" class="container">
+    <div id="items">
+        <div class="col-12">
+          <h1 class="h2">Overall Report</h1>
+        </div>
+    </div>
+    <hr />
+    <br>
+    <br>
+    <h2>Products by Retails</h2>
+    <div style="width: 50%;">
+        {% for item in data %}
+        <div style="display: flex; margin-bottom: 10px;">
+            <div style="width: 100px;">{{ item.shop_retail }}</div>
+            <div style="flex: 1; margin-left: 10px;">
+            <div style="background-color: blue; width: {{ item.count }}px; height: 20px;"></div>
+            </div>
+            <div style="margin-left: 10px;">{{ item.count }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    <hr />
+    <br>
+    <br>
+    <h2>Top Ten Most Ordered Products</h2>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3">
+    {% for product in products%}
+        <div class="col">
+            <div class="card border-0">
+              {% comment %} {% for image in product.product_image.all %}
+              {% if image.is_feature%} {% endcomment %}
+              
+              <a href="{{ product.get_absolute_url }}"><img class="img-fluid" alt="" src="{{ product.product_image }}"
+                alt=""></a>
+              {% comment %} {% endif %}
+              {% endfor %} {% endcomment %}
+              <div class="card-body px-0">
+                <p class="text-dark">From {{product.shop_retail}}</p>
+                <p class="card-text">
+                  <a class="text-dark text-decoration-none"
+                    
+                    href="{{ product.get_absolute_url }}">{{ product.product_name|slice:":50" }}...</a>
+                </p>
+                <div class="fw-bold">R{{product.price}}</div>
+              </div>
+            </div>
+          </div>
+    {%endfor%}
+
+    <div class="d-flex justify-content-center">
+        <form action="{% url 'orders:overall_summary' %}" method="post">
+            {% csrf_token %}
+            <input type='text' name='print' hidden>
+          <button class="btn btn-success" type="submit">Download Report</button>
+        </form>
+      </div>
+    </div>
+</div>
+{% endblock%}

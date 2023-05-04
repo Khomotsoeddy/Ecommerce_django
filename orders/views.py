@@ -4,6 +4,11 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from basket.basket import Basket
 from orders.serializer import OrderDeliveryOptionSerializer, OrderItemsSerializer, OrderSerializer
+from store.models import Product
+from django.db.models import Count, Sum
+from django.http import FileResponse
+from docx import Document
+import io
 
 from .models import Order, OrderDeliveryOption, OrderItem
 
@@ -90,3 +95,63 @@ class OrderItemsListView(viewsets.ModelViewSet):
 class OrderDeliveryOptionList(viewsets.ModelViewSet):
     serializer_class = OrderDeliveryOptionSerializer
     queryset = OrderDeliveryOption.objects.all()
+
+
+def overall_summary(request):
+
+    if request.method == "POST":
+
+        data = Product.objects.values('shop_retail').annotate(count=Count('id'))
+        most_ordered_products = OrderItem.objects.values('product_id').annotate(order_count=Sum('quantity')).order_by('-order_count')[:10]
+
+        print("================>",most_ordered_products)
+        list_of_ids = []
+        for mop in most_ordered_products:
+            print(mop['product_id'])
+            list_of_ids.append(mop['product_id'])
+
+        products = Product.objects.filter(id__in=list_of_ids)
+
+        content = ''
+
+        for prod in products:
+            print(prod.id)
+
+            data = '{product_Id: '+ str(prod.id)+ ',product name: '+prod.product_name+',price: '+prod.price+',product image:'+ prod.product_image+',Retails: '+prod.shop_retail+'},\n______________________________________________________________\n'
+            content += data
+            print("====================>afrer",content)
+
+        messege = content
+        
+        # create a new Word document using the python-docx library
+        document = Document()
+        document.add_heading('Top Ten most ordered products', 0)
+        document.add_paragraph(messege)
+
+        # render the document to a BytesIO object
+        document_buffer = io.BytesIO()
+        document.save(document_buffer)
+
+        # create a HttpResponse object with the document content and the appropriate headers
+        response = HttpResponse(document_buffer.getvalue(), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        response['Content-Disposition'] = 'attachment; filename=Top-ten-products.docx'
+
+        return response
+
+    data = Product.objects.values('shop_retail').annotate(count=Count('id'))
+    most_ordered_products = OrderItem.objects.values('product_id').annotate(order_count=Sum('quantity')).order_by('-order_count')[:10]
+
+    print("================>",most_ordered_products)
+    list_of_ids = []
+    for mop in most_ordered_products:
+        print(mop['product_id'])
+        list_of_ids.append(mop['product_id'])
+
+    products = Product.objects.filter(id__in=list_of_ids)
+    print(products)
+    context = {
+        'products':products,
+        'data': data,
+    }
+    
+    return render(request, 'admin/overall_summary.html', context)
