@@ -16,4 +16,5 @@ urlpatterns = [
     path('download-txt/', views.download_txt, name='download_txt'),
     path('admin_orders_report/', views.admin_orders_report, name="admin_orders_report"),
     path('overall_summary/', views.overall_summary, name='overall_summary'),
+    path('filter_admin_orders_by_date', views.filter_admin_orders_by_date, name="filter_admin_orders_by_date")
 ]

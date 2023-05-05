@@ -9,6 +9,8 @@ from django.db.models import Count, Sum
 from django.http import FileResponse
 from docx import Document
 import io
+from django.contrib import messages
+from datetime import datetime, timedelta
 
 from .models import Order, OrderDeliveryOption, OrderItem
 
@@ -155,3 +157,33 @@ def overall_summary(request):
     }
     
     return render(request, 'admin/overall_summary.html', context)
+
+def filter_admin_orders_by_date(request):
+
+    if request.method == "POST":
+
+        deta1 =  request.POST['from']
+        deta2 =  request.POST['to']
+        print('======================>my dates',deta1,deta2)
+        try:
+            date_obj_from = datetime.strptime(deta1, '%Y-%m-%d')
+            date_obj_to = datetime.strptime(deta2, '%Y-%m-%d')
+            # Do something with the valid date object
+            if date_obj_to > date_obj_from:
+                print('yes')
+                orders = Order.objects.filter(billing_status=True).filter(created__range=[date_obj_from,date_obj_to])
+                return render(request, "admin/admin_orders_report.html", {"orders": orders})
+            elif date_obj_to == date_obj_from:
+                messages.error(request, 'Please use the minimum of one day e.g: 2022/01/01 - 2022/01/02')
+                return render(request, "admin/admin_orders_report.html")
+            else:
+                print('incorrect dates')
+                messages.error(request, 'Incorrect date, From date must be less than To date')
+                return render(request, "admin/admin_orders_report.html")
+        except ValueError:
+            # Handle the case where the input is not a valid date
+            print('Invalid date')
+            messages.error(request, 'Invalid date')
+            return render(request, "admin/admin_orders_report.html")
+    
+    return render(request, "admin/admin_orders_report.html")

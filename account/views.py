@@ -45,7 +45,7 @@ def login_view(request):
             password = form.cleaned_data['password']
             if Customer.objects.filter(email=username).exists():
                 if Customer.objects.filter(email=username).filter(is_active=False).exists():
-                    messages.error(request, 'Verify your email')
+                    messages.error(request, 'Your account is not active')
                 else:
                     user = authenticate(request, username=username, password=password)
                     if user is not None:
@@ -439,6 +439,9 @@ def filter_user_orders_by_date(request):
                 print('yes')
                 orders = Order.objects.filter(user_id=user_id).filter(billing_status=True).filter(created__range=[date_obj_from,date_obj_to])
                 return render(request, "account/dashboard/user_order_report.html", {"orders": orders})
+            elif date_obj_to == date_obj_from:
+                messages.error(request, 'Please use the minimum of one day')
+                return render(request, "admin/admin_orders_report.html")
             else:
                 print('incorrect dates')
                 messages.error(request, 'Incorrect date, From date must be less than To date')
