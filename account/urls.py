@@ -12,7 +12,7 @@ from .forms import PwdResetConfirmForm, PwdResetForm, UserLoginForm
 app_name = "account"
 router = routers.DefaultRouter()
 router.register(r'customers', views.CustomersListView, basename='customers')
-router.register(r'address', views.AddressListView, basename='address')
+# router.register(r'address', views.AddressListView, basename='address')
 
 urlpatterns = [
     path(
