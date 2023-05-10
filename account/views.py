@@ -315,9 +315,10 @@ def get_customers(request):
 @login_required
 def customer_detail(request, id):
 
+    orders = Order.objects.filter(user_id = id)
     customer = get_object_or_404(Customer.objects.all().filter(id=id))
     print(customer.id)
-    return render(request, "admin/customer-detail.html",{"customer":customer} )
+    return render(request, "admin/customer-detail.html",{"customer":customer, 'orders':orders})
 
 # Addresses
 
@@ -497,9 +498,59 @@ def admin_customers_report(request):
     print(request.method)
     if request.method == "POST":
 
-        return render(request, "admin/admin_customers_report.html")
+        deta =  request.POST['filter']
+
+        print('=================>',deta)
+
+        if deta == '18-25':
+
+            customers = Customer.objects.filter(is_staff=False).filter(Q(age_number__gte=18) & Q(age_number__lte=25))
+            return render(request, "admin/admin_customers_report.html", {'customers':customers})
+        if deta == '26-35':
+
+            customers = Customer.objects.filter(is_staff=False).filter(Q(age_number__gte=26) & Q(age_number__lte=35))
+            return render(request, "admin/admin_customers_report.html", {'customers':customers})
+        if deta == '36-45':
+
+            customers = Customer.objects.filter(is_staff=False).filter(Q(age_number__gte=36) & Q(age_number__lte=45))
+            return render(request, "admin/admin_customers_report.html", {'customers':customers})
+        if deta == '46+':
+
+            customers = Customer.objects.filter(is_staff=False).filter(Q(age_number__gte=46))
+            return render(request, "admin/admin_customers_report.html", {'customers':customers})
     
     return render(request, "admin/admin_customers_report.html")
+
+@login_required
+def filter_user_admin_by_date(request):
+
+    if request.method == "POST":
+
+        deta1 =  request.POST['from']
+        deta2 =  request.POST['to']
+        print('my dates',deta1,deta2)
+        try:
+            date_obj_from = datetime.strptime(deta1, '%Y-%m-%d')
+            date_obj_to = datetime.strptime(deta2, '%Y-%m-%d')
+            # Do something with the valid date object
+
+            if date_obj_to > date_obj_from:
+                print('yes')
+                customers = Customer.objects.filter(is_staff=False).filter(created__range=[date_obj_from,date_obj_to])
+                return render(request, "admin/admin_customers_report.html", {'customers':customers})
+            elif date_obj_to == date_obj_from:
+                messages.error(request, 'Please use the minimum of one day')
+                return render(request, "admin/admin_customers_report.html")
+            else:
+                print('incorrect dates')
+                messages.error(request, 'Incorrect date, From date must be less than To date')
+                return render(request, "admin/admin_customers_report.html")
+        except ValueError:
+            # Handle the case where the input is not a valid date
+            print('Invalid date')
+            messages.error(request, 'Invalid date')
+            return render(request, "admin/admin_customers_report.html")
+    
 
 @login_required
 def user_orders(request):

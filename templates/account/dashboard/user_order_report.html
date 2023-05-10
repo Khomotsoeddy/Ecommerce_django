@@ -50,7 +50,7 @@
 <div class="col-12 d-flex justify-content-between">
   <div>Generate your <b>reports</b></div>
   <div class="p-2 bd-highlight">
-    <i class="fa-solid fa-filter"></i>Filter By:
+    <i class="fa-solid fa-filter"></i>Filter By Period of:
     <form name="orderFilter" method="post" action="{% url 'account:filter_user_orders' %}">
       {% csrf_token %}
       <select onChange="orderFilter.submit();" size="1" id="nav_combo" name="filter" >

@@ -4,6 +4,358 @@
 
 {% block content %}
 
+<style>
+    * {
+      box-sizing: border-box;
+    }
+      form.example input[type=date] {
+        padding: 10px;
+        font-size: 17px;
+        border: 1px solid grey;
+        float: left;
+        width: 40%;
+        background: #f1f1f1;
+      }
+      form.example label{
+        font-size: 17px;
+        float: left;
+        width: 40%;
+      }
+  
+        form.example button {
+        float: left;
+        width: 20%;
+        padding: 10px;
+        background: #2196F3;
+        color: white;
+        font-size: 17px;
+        border: 1px solid grey;
+        border-left: none;
+        cursor: pointer;
+      }
+  
+      form.example button:hover {
+        background: #0b7dda;
+      }
+  
+      form.example::after {
+        content: "";
+        clear: both;
+        display: table;
+      }
+</style>
 
+<div class="container">
+    <div class="col-12">
+        <h1 class="h2">Customers</h1>
+    </div>
+    <div class="col-12 d-flex justify-content-between">
+        <div>Generate your <b>reports</b></div>
+
+        <div class="p-2 bd-highlight">
+            <i class="fa-solid fa-filter"></i>Filter By Age:
+            <form name="orderFilter" method="post" action="{% url 'account:admin_customers_report' %}">
+              {% csrf_token %}
+              <select onChange="orderFilter.submit();" size="1" id="nav_combo" name="filter" >
+                <option value="default"></option>
+                <option value="18-25">18 - 25</option>
+                <option value="26-35">26 - 35</option>
+                <option value="36-45">36 - 45</option>
+                <option value="46+">46+</option>
+              </select>
+            </form>
+          </div>
+    </div>
+    <div>
+        <i class="fa-solid fa-filter"></i> Filter Using account creation date:
+        <form method="post" class="example" action="{% url 'account:filter_user_admin_by_date' %}">
+            {% csrf_token %}
+            <label>From :</label><label>To :</label>
+            <input type='date'  min="2022-01-01" name='from' placeholder="From" required>
+            <input type='date' name='to' max="2023-12-31" placeholder="To" required>
+            <button type="submit"><i class="fa-solid fa-filter"></i></button>
+        </form>
+    </div> 
+    
+    <hr/>
+    <div class="table-wrap">
+       
+        <br>
+        {% if not customers%}
+        <div class="col-12">There no customers</div>
+        {% else %}
+        <table class="sortable">
+          <thead>
+            <tr>
+                <th>
+                    <button>
+                        ID
+                        <span aria-hidden="true"></span>
+                    </button>
+                </th>
+                <th>
+                    <button>
+                      Name
+                    <span aria-hidden="true"></span>
+                    </button>
+                </th>
+                <th aria-sort="ascending">
+                    <button>
+                    Email
+                    <span aria-hidden="true"></span>
+                    </button>
+                </th>
+                <th>
+                    <button>
+                    DoB
+                    <span aria-hidden="true"></span>
+                    </button>
+                </th>
+                <th class="no-sort">
+                    Gender
+                </th>
+                <th>
+                    <button>
+                        Created on
+                        <span aria-hidden="true"></span>
+                    </button>
+                </th>
+                <th>
+                    <button>
+                        Mobile
+                        <span aria-hidden="true"></span>
+                    </button>
+                </th>
+                <th>
+                  <button>
+                      Active
+                      <span aria-hidden="true"></span>
+                  </button>
+              </th>
+                <th class="num">
+                    <button>
+                    Age
+                    <span aria-hidden="true"></span>
+                    </button>
+                </th>
+                <th >
+                  Action
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for customer in customers%}
+            
+            <tr>
+                
+                <td style="text-align: left;" class="num">
+                  {{customer.id}}
+                </td>
+              <td>
+                {{customer.name}} {{customer.surname}} {{customer.second_surname}}
+              </td>
+              <td>
+                {{customer.email}}
+              </td>
+              <td>
+                {{customer.date_of_birth}}
+              </td>
+              <td>
+                {{customer.gender}}
+              </td>
+              <td>
+                {{customer.created}}
+              </td>
+              <td>
+                {{customer.mobile}}
+              </td>
+              <td>
+                {{customer.is_active}}
+              </td>
+              <td style="text-align: left;" class="num">
+                {{customer.age_number}}
+              </td>
+              <td>
+                <a type="button" href="{{ customer.get_absolute_url }}">Edit</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+        <hr/>
+      </div>
+    <script>
+        /*
+ *   This content is licensed according to the W3C Software License at
+ *   https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document
+ *
+ *   File:   sortable-table.js
+ *
+ *   Desc:   Adds sorting to a HTML data table that implements ARIA Authoring Practices
+ */
+
+'use strict';
+
+class SortableTable {
+  constructor(tableNode) {
+    this.tableNode = tableNode;
+
+    this.columnHeaders = tableNode.querySelectorAll('thead th');
+
+    this.sortColumns = [];
+
+    for (var i = 0; i < this.columnHeaders.length; i++) {
+      var ch = this.columnHeaders[i];
+      var buttonNode = ch.querySelector('button');
+      if (buttonNode) {
+        this.sortColumns.push(i);
+        buttonNode.setAttribute('data-column-index', i);
+        buttonNode.addEventListener('click', this.handleClick.bind(this));
+      }
+    }
+
+    this.optionCheckbox = document.querySelector(
+      'input[type="checkbox"][value="show-unsorted-icon"]'
+    );
+
+    if (this.optionCheckbox) {
+      this.optionCheckbox.addEventListener(
+        'change',
+        this.handleOptionChange.bind(this)
+      );
+      if (this.optionCheckbox.checked) {
+        this.tableNode.classList.add('show-unsorted-icon');
+      }
+    }
+  }
+
+  setColumnHeaderSort(columnIndex) {
+    if (typeof columnIndex === 'string') {
+      columnIndex = parseInt(columnIndex);
+    }
+
+    for (var i = 0; i < this.columnHeaders.length; i++) {
+      var ch = this.columnHeaders[i];
+      var buttonNode = ch.querySelector('button');
+      if (i === columnIndex) {
+        var value = ch.getAttribute('aria-sort');
+        if (value === 'descending') {
+          ch.setAttribute('aria-sort', 'ascending');
+          this.sortColumn(
+            columnIndex,
+            'ascending',
+            ch.classList.contains('num')
+          );
+        } else {
+          ch.setAttribute('aria-sort', 'descending');
+          this.sortColumn(
+            columnIndex,
+            'descending',
+            ch.classList.contains('num')
+          );
+        }
+      } else {
+        if (ch.hasAttribute('aria-sort') && buttonNode) {
+          ch.removeAttribute('aria-sort');
+        }
+      }
+    }
+  }
+
+  sortColumn(columnIndex, sortValue, isNumber) {
+    function compareValues(a, b) {
+      if (sortValue === 'ascending') {
+        if (a.value === b.value) {
+          return 0;
+        } else {
+          if (isNumber) {
+            return a.value - b.value;
+          } else {
+            return a.value < b.value ? -1 : 1;
+          }
+        }
+      } else {
+        if (a.value === b.value) {
+          return 0;
+        } else {
+          if (isNumber) {
+            return b.value - a.value;
+          } else {
+            return a.value > b.value ? -1 : 1;
+          }
+        }
+      }
+    }
+
+    if (typeof isNumber !== 'boolean') {
+      isNumber = false;
+    }
+
+    var tbodyNode = this.tableNode.querySelector('tbody');
+    var rowNodes = [];
+    var dataCells = [];
+
+    var rowNode = tbodyNode.firstElementChild;
+
+    var index = 0;
+    while (rowNode) {
+      rowNodes.push(rowNode);
+      var rowCells = rowNode.querySelectorAll('th, td');
+      var dataCell = rowCells[columnIndex];
+
+      var data = {};
+      data.index = index;
+      data.value = dataCell.textContent.toLowerCase().trim();
+      if (isNumber) {
+        data.value = parseFloat(data.value);
+      }
+      dataCells.push(data);
+      rowNode = rowNode.nextElementSibling;
+      index += 1;
+    }
+
+    dataCells.sort(compareValues);
+
+    // remove rows
+    while (tbodyNode.firstChild) {
+      tbodyNode.removeChild(tbodyNode.lastChild);
+    }
+
+    // add sorted rows
+    for (var i = 0; i < dataCells.length; i += 1) {
+      tbodyNode.appendChild(rowNodes[dataCells[i].index]);
+    }
+  }
+
+  /* EVENT HANDLERS */
+
+  handleClick(event) {
+    var tgt = event.currentTarget;
+    this.setColumnHeaderSort(tgt.getAttribute('data-column-index'));
+  }
+
+  handleOptionChange(event) {
+    var tgt = event.currentTarget;
+
+    if (tgt.checked) {
+      this.tableNode.classList.add('show-unsorted-icon');
+    } else {
+      this.tableNode.classList.remove('show-unsorted-icon');
+    }
+  }
+}
+
+// Initialize sortable table buttons
+window.addEventListener('load', function () {
+  var sortableTables = document.querySelectorAll('table.sortable');
+  for (var i = 0; i < sortableTables.length; i++) {
+    new SortableTable(sortableTables[i]);
+  }
+});
+</script>
+
+</div>
+    
 
 {% endblock%}

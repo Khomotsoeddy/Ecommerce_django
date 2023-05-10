@@ -1,5 +1,7 @@
-{% extends "../base.html" %} {% load static %} {% block title %}Admin
-order{%endblock %} {% block content %}
+{% extends "../base.html" %} 
+{% load static %} 
+{% block title %}Admin order{%endblock %} 
+{% block content %}
 
 <div class="container">
   <div class="col-12">
@@ -52,13 +54,7 @@ order{%endblock %} {% block content %}
       </thead>
       <tbody>
         {% for order in orders%}
-        {% comment %} <style>
-          .nnn{
-            border: none;
-          }
-        </style> {% endcomment %}
         <tr>
-          {% comment %} <td>{{order.id}}</td> {% endcomment %}
           <td style="text-align: left;" class="num">{{order.id}}
           
         </td>

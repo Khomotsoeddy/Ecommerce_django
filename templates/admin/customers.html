@@ -34,7 +34,7 @@
         clear: both;
         display: table;
       }
-  </style>
+</style>
 
 <div class="container">
 
@@ -336,27 +336,7 @@ window.addEventListener('load', function () {
     new SortableTable(sortableTables[i]);
   }
 });
-    </script>
-
-    {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js "></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-<script>
-  window.jsPDF = window.jspdf.jsPDF;
-var docPDF = new jsPDF();
-function print(){
-var elementHTML = document.querySelector(".table-wrap");
-docPDF.html(elementHTML, {
- callback: function(docPDF) {
-  docPDF.save('customerList.pdf');
- },
- x: 5,
- y: 5,
- width: 200,
- windowWidth: 600
-});
-}
-</script> {% endcomment %}
+</script>
 </div>
 
 {% endblock %}

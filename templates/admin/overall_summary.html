@@ -79,7 +79,7 @@
         clear: both;
         display: table;
       }
-  </style>
+</style>
 
 <div id="container" class="container">
     <div id="items">
@@ -110,14 +110,11 @@
     {% for product in products%}
         <div class="col">
             <div class="card border-0">
-              {% comment %} {% for image in product.product_image.all %}
-              {% if image.is_feature%} {% endcomment %}
-              
               <a href="{{ product.get_absolute_url }}"><img class="img-fluid" alt="" src="{{ product.product_image }}"
-                alt=""></a>
-              {% comment %} {% endif %}
-              {% endfor %} {% endcomment %}
-              <div class="card-body px-0">
+                alt="">
+            </a>
+
+            <div class="card-body px-0">
                 <p class="text-dark">From {{product.shop_retail}}</p>
                 <p class="card-text">
                   <a class="text-dark text-decoration-none"

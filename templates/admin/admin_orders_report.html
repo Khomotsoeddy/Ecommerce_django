@@ -47,7 +47,7 @@
 
 <div class="container">
     <div class="col-12">
-        <h1 class="h2">User Orders</h1>
+        <h1 class="h2">Orders</h1>
       </div>
       <div class="col-12 d-flex justify-content-between">
         <div>Generate your <b>reports</b></div>
@@ -116,13 +116,7 @@
       </thead>
       <tbody>
         {% for order in orders%}
-        {% comment %} <style>
-          .nnn{
-            border: none;
-          }
-        </style> {% endcomment %}
         <tr>
-          {% comment %} <td>{{order.id}}</td> {% endcomment %}
           <td style="text-align: left;" class="num">{{order.id}}
           
         </td>
@@ -146,12 +140,6 @@
     </table>
   </div>
   {% endif %} 
-  
-  {% comment %} <div class="d-flex justify-content-center">
-    <form action="{% url 'orders:download_txt' %}" method="get">
-      <button class="btn btn-success" type="submit">Download Txt</button>
-    </form>
-  </div> {% endcomment %}
   <script>
     /*
      *   This content is licensed according to the W3C Software License at
