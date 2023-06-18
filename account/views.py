@@ -575,6 +575,29 @@ def user_orders(request):
     return render(request, "account/dashboard/user_orders.html", {"orders": orders})
 
 @login_required
+def user_order_search(request):
+    user_id = request.user.id
+    print(request.method)
+    orders = Order.objects.filter(user_id=user_id)
+    if request.method == "POST":
+        deta =  request.POST['search_data']
+
+        print("---------->",deta)
+
+        if(deta.isnumeric()):
+            if deta == "":
+                print("nothing")
+                messages.error(request, 'Please insert something')
+            else:
+                orders = Order.objects.filter(user_id=user_id).filter(id=deta)
+                return render(request, "account/dashboard/user_orders.html", {"orders": orders})
+            # return render(request, "admin/orders.html", {"orders": orders})
+        else:
+            messages.error(request, 'Wrong input')
+            
+        return render(request, "account/dashboard/user_orders.html", {"orders": orders})
+    
+@login_required
 def order_detail(request):
     user_id = request.user.id
 

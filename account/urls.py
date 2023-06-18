@@ -84,4 +84,5 @@ urlpatterns = [
     path('filter_user_orders_by_date', views.filter_user_orders_by_date, name='filter_user_orders_by_date'),
     path('admin_customers_report/', views.admin_customers_report, name='admin_customers_report'),
     path('filter_user_admin_by_date/', views.filter_user_admin_by_date, name='filter_user_admin_by_date'),
+    path('user_order_search/',views.user_order_search,name='user_order_search')
 ]

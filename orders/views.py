@@ -52,6 +52,22 @@ def user_orders(request):
 
 def admin_orders(request):
     orders = Order.objects.all()
+    print(request.method)
+    if request.method == "POST":
+        deta =  request.POST['search_data']
+
+        print("---------->",deta)
+
+        if(deta.isnumeric()):
+
+            if deta == "":
+                print("nothing")
+                messages.error(request, 'Please insert something')
+            else:
+                orders = Order.objects.filter(id = deta)
+            return render(request, "admin/orders.html", {"orders": orders})
+        else:
+            messages.error(request, 'Wrong input')
 
     print(orders)
     return render(request, "admin/orders.html", {"orders": orders})

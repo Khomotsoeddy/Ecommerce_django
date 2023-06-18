@@ -3,11 +3,54 @@
 {% block title %}Admin order{%endblock %} 
 {% block content %}
 
+<style>
+  form.example input[type=text] {
+    padding: 10px;
+    font-size: 17px;
+    border: 1px solid grey;
+    float: left;
+    width: 80%;
+    background: #f1f1f1;
+  }
+
+    form.example button {
+    float: left;
+    width: 20%;
+    padding: 10px;
+    background: #2196F3;
+    color: white;
+    font-size: 17px;
+    border: 1px solid grey;
+    border-left: none;
+    cursor: pointer;
+  }
+
+  form.example button:hover {
+    background: #0b7dda;
+  }
+
+  form.example::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+</style>
+
 <div class="container">
   <div class="col-12">
     <h1 class="h2">Order Summary</h1>
   </div>
   <hr />
+  {% if messages %}
+  {% for message in messages %}
+   {% if message.tags %}  <div class="alert alert-primary" role="alert">{{ message }}</div> {% endif %}
+  {% endfor %}
+{% endif %}
+  <form method="post" class="example" action="{% url "orders:orders"%}">
+    {% csrf_token %}
+    <input type="text" placeholder="Search by order id..." name="search_data">
+    <button type="submit"><i class="fa fa-search"></i></button>
+</form>
   <button><a href="{% url "orders:admin_orders_report" %}" class="text-reset text-decoration-none" role="button"> Generate Report</a></button>
   {% if not orders%}
   <div class="col-12">There are currently no orders</div>
